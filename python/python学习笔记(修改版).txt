@@ -1,0 +1,2554 @@
+
+
+基础语法
+
+---整型（int）与浮点型（float），用type()查看类型
+2.0是浮点型，/得到浮点型，//得到整型
+>>> type(1+1.0)
+<class 'float'>
+>>> 1+1.0
+2.0
+
+>>> type(1*1.0)
+<class 'float'>
+
+>>> type(2/2)
+<class 'float'>
+>>> type(2//2)
+<class 'int'>
+这里双斜杠“//"表示整除（取整数）
+>>> 2/2
+1.0
+>>> 2//2
+1
+>>> 1//2
+0
+
+---
+
+---10,2,8,16进制
+0b表示二进制
+>>> 0b10
+2
+
+0o表示8进制
+
+0x表示16进制
+
+其他进制转换成2进制: bin()
+>>> bin(10)
+'0b1010'
+
+其他进制转换成10进制：int()
+
+其他进制转换成16进制: hex()
+
+其他进制转换成8进制: oct()
+
+
+---
+
+---布尔类型（bool）与复数（complex）
+j表示复数，比如36j
+True，False
+0表示False，非0表示True
+空表示False，非空表示True，None也是False
+
+>>> int(True)
+1
+>>> int(False)
+0
+>>> bool(0)
+False
+>>> bool(1)
+True
+>>> bool(3)
+True
+
+---字符串：单引号与双引号
+str字符串，用单引号，双引号，三引号表示字符串
+>>> type(1)
+<class 'int'>
+>>> type('1')
+<class 'str'>
+>>> 
+
+>>> 'let\'s go'   转义字符“\”
+"let's go"
+
+---多行字符串
+多行字符串要用三引号（三个单引号或者三个双引号）
+>>> '''
+hello
+world
+haha
+'''
+'\nhello\nworld\nhaha\n'           
+>>> 
+\n表示回车
+
+>>> '''hello \n world'''
+'hello \n world'
+>>> print('''hello \n world''')
+hello 
+ world
+>>> 
+
+单引号或双引号也可以表示多行字符串
+>>> 'hello\
+world'
+'helloworld'
+
+
+---转义字符：特殊字符，表示无法“看见”的字符，与语言本身语法有冲突的字符，如单引号在python语法中表示字符串，但也可作为普通字符
+\n 换行 
+\r 回车
+\' 单引号
+\t 横向制表符
+
+---原始字符串
+字符串前面加上r（大小写都行），表示这不是一个普通字符，而是一个原始字符串（所见即所得）
+>>> print('hello \nworld')
+hello 
+world
+>>> print(r'hello \nworld')
+hello \nworld
+>>> 
+
+---字符串运算
+合并
+>>> 'hello' + 'world'
+'helloworld'
+重复
+>>> 'hello' * 3
+'hellohellohello'
+索引
+>>> 'hello world'[0]
+'h'
+>>> 'hello world'[3]
+'l'
+>>> 'hello world'[-1]
+'d'
+
+分片：截取一段字符串
+>>> 'hello world'[0:4]
+'hell'
+>>> 
+>>> 'hello world'[0:-1]
+'hello worl'
+
+>>> 'hello world'[6:]
+'world'
+>>> 'hello world'[-5:]
+'world'
+>>> 'hello world'[6:11]
+'world'
+>>> 'hello world'[6:100]
+'world'
+
+---列表(list)的定义
+组：
+列表：[1,2,3,'hello','world',True,False,[1,2]] 列表里面的元素可以是数字，字符串，布尔类型，列表等
+>>> type([1,2,3])
+<class 'list'>
+列表里面还有列表叫嵌套列表
+
+---列表的基本操作
+截取列表的元素，注意这里截取单个（没有用冒号）得到的是字符串，用了冒号得到的是列表
+>>> ['a','b','c','d'][2]
+'c'
+>>> ['a','b','c','d'][0:2]
+['a', 'b']
+>>> ['a','b','c','d'][-1:]
+['d'] 
+>>> [1,2,3,4,5,6,7,8][0::2]       
+[1, 3, 5, 7]
+>>> [1,2,3,4,5,6,7,8][::2]
+[1, 3, 5, 7]
+>>> [1,2,3,4,5,6,7,8][::-1]  
+[8, 7, 6, 5, 4, 3, 2, 1]
+>>> [1,2,3,4,5,6,7,8][::-2]
+[8, 6, 4, 2]
+
+列表操作：支持列表相加，不支持相减，乘，除。列表可以乘整数
+合并列表
+>>> ['a','b'] + ['c','d']
+['a', 'b', 'c', 'd']
+
+>>> ['a','b'] * ['c','d']
+Traceback (most recent call last):
+  File "<pyshell#21>", line 1, in <module>
+    ['a','b'] * ['c','d']
+TypeError: can't multiply sequence by non-int of type 'list'
+>>> ['a','b'] * 3
+['a', 'b', 'a', 'b', 'a', 'b']
+>>> ['a','b'] - ['a']
+Traceback (most recent call last):
+  File "<pyshell#23>", line 1, in <module>
+    ['a','b'] - ['a']
+TypeError: unsupported operand type(s) for -: 'list' and 'list'
+>>> 
+列表的属性方法：
+sort()对列表进行升序排序,reverse()对列表进行反序，这两个方法会直接修改原列表。
+
+
+---元组(tuple)
+(1,'a',True)
+
+>>> type((1,'a',True))
+<class 'tuple'>
+
+>>> (1,'a',True)[0]
+1
+>>> (1,'a',True)[0:2]
+(1, 'a')
+>>> (1,'a',True) + (4,5)
+(1, 'a', True, 4, 5)
+>>> (1,'a',True)*3
+(1, 'a', True, 1, 'a', True, 1, 'a', True)
+>>> 
+
+当小括号里面只有一个元素时容易造成歧义，比如跟(1+1)*2 这里的运算优先符混淆，所以当小括号内只有一个元素时不表示元组。
+>>> type((1))
+<class 'int'>
+>>> type(('a'))
+<class 'str'>
+只有一个元素的元组定义：(1,) 要在唯一的元素后面加上逗号
+空元组：()   
+>>> type(())
+<class 'tuple'>
+
+
+---列表和元组的互相转换
+>>> list((1,2,3))
+[1, 2, 3]
+>>> tuple([1,2,3])
+(1, 2, 3)
+
+---列表和元组常用的内置函数：
+>>> l = [2,3,2,7,8,1]
+>>> l.count(2)
+2
+>>> l.index(7)
+3
+>>> l.reverse()
+>>> l
+[1, 8, 7, 2, 3, 2]
+>>> l.sort()
+>>> l
+[1, 2, 2, 3, 7, 8]
+>>> tup = (3,2,3,7,8,1)
+>>> tup.count(3)
+2
+>>> tup.index(8)
+4
+>>> list(reversed(tup))
+[1, 8, 7, 3, 2, 3]
+>>> sorted(tup)
+[1, 2, 3, 3, 7, 8]
+>>> 
+* count(item) 表示统计列表 / 元组中 item 出现的次数。
+* index(item) 表示返回列表 / 元组中 item 第一次出现的索引。
+* list.reverse() 和 list.sort() 分别表示原地倒转列表和排序（注意，元组没有内置的这两个函数)。
+* reversed() 和 sorted() 同样表示对列表 / 元组进行倒转和排序，reversed() 返回一个倒
+转后的迭代器（上文例子使用 list() 函数再将其转换为列表）；sorted() 返回排好序的新列表
+
+
+数据类型：int,float,bool,str,list,tuple
+序列：str,list,tuple
+
+---序列共性：
++（连接）,*（重复）
+切片   [1,2,3,4,5][0:3]
+
+in   
+>>> 3 in [1,3,2,4,5]
+ True
+
+ not in    
+>>> 3 not in [1,3,2,4,5]
+False
+
+>>> len("hello world")
+11
+>>> max(2,5,9,3,6)
+9
+>>> min(0,3,5,9)
+0
+>>> max("hello world")
+'w'
+
+比较：从左开始按元素对齐比较
+>>> (8,) > (1,20)
+True
+
+转换ASCII码
+>>> ord('w')
+119
+>>> ord(' ')
+32
+
+---集合set
+python的基本数据类型
+集合的特点：无序（所以不能像序列一样用序号取值，也不能做切片操作），不重复（元素不会重复），
+>>> type({1,2,3,4,5,6})
+<class 'set'>
+
+>>> 1 in {1,2,5,7}
+True
+>>> 1 not in {1,3,7,3}
+False
+求两个集合的差集
+>>> {1,3,4,6,8} - {3,4}
+{8, 1, 6}
+>>> len({2,7,9})
+3
+求两个集合的交集
+>>> {1,3,4,6,8} & {3,4}
+{3, 4}
+
+求两个集合的并集
+>>> {1,3,4,6,8} | {3,4,9,5}
+{1, 3, 4, 5, 6, 8, 9}
+
+空集合：set()
+>>> type(set())
+<class 'set'>
+>>> len(set())
+0
+集合增加/删除一个元素：
+>>> s.add(4)
+>>> print(s)
+{1, 2, 3, 4}
+>>> s.remove(1)
+>>> print(s)
+{2, 3, 4}
+>>> 
+
+
+---字典dict
+Key: Value 的集合
+字典是一种集合不是序列，无序（所以不能像序列一样用序号取值，也不能做切片操作），字典不能有重复的key，
+字典的key不一定是字符串也可以是数字，key只能是不可变的类型（列如：int，str，tuple），value可以是任意数据类型（str,int,float,list,set,dict）
+字典通过key访问value
+>>> {'a':1,'b':2,'c':3}['b']
+2
+
+空字典：{}
+
+字典新增元素：
+>>> b = {'a':1,'b':2,'c':3}
+>>> b['z'] = 4
+>>> print(b)
+{'a': 1, 'b': 2, 'c': 3, 'z': 4}
+修改key的值：
+>>> b = {'a': 1, 'b': 2, 'c': 3, 'z': 4}
+>>> b['z'] = 5
+>>> print(b)
+{'a': 1, 'b': 2, 'c': 3, 'z': 5}
+删除一个元素对：
+>>> print(b)
+{'a': 1, 'b': 2, 'c': 3, 'z': 5}
+>>> b.pop('a')
+1
+>>> print(b)
+{'b': 2, 'c': 3, 'z': 5}
+>>> 
+
+---基本数据类型
+数字（Number）：int，float，bool，complex
+
+
+-------变量与运算符
+
+---什么是变量
+定义变量：变量名 = 
+建议变量名有意义
+>>> A=[1,2,3,4,5,6,7]
+>>> B=[2,4,5]
+>>> A*3 + B + A
+[1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 2, 4, 5, 1, 2, 3, 4, 5, 6, 7]
+
+---变量的命名规则
+变量名只能包含字母，数字，下划线。变量名首字符不能是数字。系统关键字（保留关键字，如and，import，if等）不能作为变量名，
+type不是系统保留关键字但是方法名，不建议用方法名作为变量名。变量名区分大小写
+
+
+>>> a = 1
+>>> b = a
+>>> a = 3
+>>> print(b)
+1      #这里为什么是1？是因为把a赋值给b时是把b指向了1，而后面把3赋值给a时是把a重新指向了3（新的内存地址）
+>>> a = [1,2,3,4]
+>>> b = a
+>>> a[0] = '1'
+>>> print(a)
+['1', 2, 3, 4]
+>>> print(b)
+['1', 2, 3, 4]      #这里的a前后指向的内存地址没变
+
+---值类型与引用类型
+int，str，tuple 值类型，是不可变的，比如'hello'[0] = H会报错
+list，set，dict 引用类型，是可变的 
+id()函数,显示某个变量在内存中的地址
+>>> b = 'hello'
+>>> id(b)
+2239977877376
+>>> b = b + 'hello'
+>>> id(b)
+2239977942128
+>>> 
+
+---列表的可变与元组的不可变
+列表追加一个元素 [1,2,3].append(5)
+>>> a = [1,2,3]
+>>> a.append(5)
+>>> print(a)
+[1, 2, 3, 5]
+
+删除列表的一个元素，remove()方法，注意这里是从左开始查找要删除的元素，找到即删除退出，不会继续查找，也就是后面用重复的元素不会被删除。
+>>> b = [1,2,3,4,5,2,4,3,2,1]
+>>> b.remove(2)
+>>> print(b)
+[1, 3, 4, 5, 2, 4, 3, 2, 1]
+>>> 
+
+元组就是不可变的，能用元组就用元组而不是列表
+>>> a = (1,2,3,[4,5,6])
+>>> a[3][0]
+4
+
+>>> a = (1,2,3,[4,5,6,[7,8,9]])
+>>> a[3][3][0]
+7
+>>> a[3][3][0] = 10
+>>> print(a)
+(1, 2, 3, [4, 5, 6, [10, 8, 9]])
+>>> 
+
+
+---运算符号
+python中并不是只能对数字做运算
+1,算术运算符：  + - * / //(整除) %(取余数) 2**2（2的2次方） 2**5（2的5次方）
+2,赋值运算符：  =  +=  -=  *=  /=  %=  **=  //=
+3,关系运算符：  ==  !=  >  <  >=  <=
+4,逻辑运算符：  and, or,  not
+5,成员运算符：  in, not in 
+6,身份运算符：  is, is not
+7,位运算符：    &  |  ^  ~  <<  >>
+
+---赋值运算符
+python的变量是不用定义的，只要赋值给变量即可。赋值运算符+=等是先做运算再赋值
+a+=b ----> a=a+b
+a-=b ----> a=a-b
+a*=c ----> a=a*c
+
+很多编程语言中还有c++(自增)和c--(自减)的写法，c++即c=c+1,但是python中没有
+
+---比较（关系）运算符
+除了数字，其他数据类型也可以比较。比较运算符运行的结果是布尔类型
+
+这里是比较字符串的ASCII码
+>>> 'a' > 'b'
+False
+
+有多位的字符串比较是按位进行比较的
+
+---逻辑运算符
+逻辑运算符操作布尔类型，返回结果也是布尔类型
+>>> True and True
+True
+>>> True and False
+False
+>>> True or False
+True
+>>> not False
+True
+
+逻辑运算符到底返回哪个值？这里的规律就是，从左往右开始读，返回第一个能确定结果是真还是假的值，比如0 and 1 第一个0就知道结果为假，所以返回第一个值0。
+2 and 7，and前面2无法判断这个运算的结果是真还是假，只有读取第二个值7才知道结果是真还是假，所以返回and后面的值7.
+>>> 0 and 1
+0
+>>> 1 and 0
+0
+>>> 1 and 2
+2
+>>> 2 and 1
+1
+>>> 1 or 0
+1
+>>> 0 or 1
+1
+
+---成员运算符，判断一个元素是否在一组元素里，运算结果是布尔类型
+字典成员运算符判断的是key是否存在
+
+---身份运算符（is，is not）
+关系运算符比较的是值是否相等，而is不是比较值相等，is比较的是两个变量的身份是否相等（即两个变量的内存地址是否相等）
+>>> a = 1
+>>> b = 1.0
+>>> a == b
+True
+>>> a is b
+False
+
+--如何判断变量的值，身份与类型
+>>> a = {1,2,3}
+>>> b = {2,1,3}
+>>> c = (1,2,3)
+>>> d = (2,1,3)
+>>> a == b         #集合是无序的，所以值相等
+True
+>>> a is b         #两个变量的内存地址不通
+False
+>>> c == d         #元组是有序的
+False
+>>> c is d         #值不同，内存地址肯定不同
+False
+
+对象的三个特征：值，身份，类型
+>>> a = 'hello'
+>>> type(a) == int
+False
+>>> type(a) == str
+True
+>>> isinstance(a,int)          #isinstance() 判断变量的类型
+False
+>>> isinstance(a,str)
+True
+>>> isinstance(a,(int,str,float))     #isinstance()的另一种用法
+True
+>>> isinstance(a,(int,tuple,float))
+False
+
+不推荐用type()作为类型判断的方法，因为type()无法判断变量子类的类型
+
+---位运算符，转换成二进制数进行运算
+&（按位与），|（按位或），^（按位异或），~（按位取反），<<（左移动），>>（右移动）
+
+
+-----分支，循环，条件与枚举
+
+---什么是表达式
+表达式（Expression）是运算符（operator）和操作数（operand）所构成的序列
+
+---表达式的优先级
+逻辑运算符and的优先级比or高
+表达式一般是左结合（从左边开始），有赋值符号（=）的遵循右结合（从=号右边开始）
+not > and > or 
+
+
+---基本类型与基本概念
+
+
+---开发工具：IDE（pycharm，vscode，sublime）初学者推荐vscode
+
+---python linter
+linter插件作用是语法检错
+
+---流程控制语句之条件控制一
+python在语句末尾不强制要求加分号（可加可不加）
+python中不需要{}把一组代码包裹起来
+python靠缩进区分代码块
+单行注释用#，多行注释用三单引号
+条件控制，循环控制，分支
+vscode单行注释ctrl+/，多行注释alt+shift+a
+条件控制语句：if else
+
+mood = True
+if mood :
+    print('go to left')
+else : 
+    print('go to right')
+
+---print()的用法
+····································
+chinese_zodiac = '猴鸡狗猪鼠牛虎兔龙蛇马羊'
+
+for year in range(2000, 2027):
+    print('%s 年生肖是 %s' %(year, chinese_zodiac[year % 12]))          #注意这里的用法，%s表示字符串（%i表示int型），这里两个%s用后面的%()里面的变量替换
+····································
+
+	
+---流程控制语句之条件控制二
+python推荐变量命名规范：最好用小写，建议用下划线分隔单词
+
+接受输入的函数input()
+account = 'laotan'
+password = '123456'
+
+print('please input account')
+user_account = input()
+
+print('please input password')
+user_password = input()
+
+if user_account == account and user_password == password:
+    print('sucess')
+else:
+    print('failed')
+
+---input的经典误区：
+    a = input('Please input a number:')        #input的用法
+    if a:
+        print('you are True')
+    else:
+        print('you are false'
+    执行结果：
+    PS D:\python\14> python.exe .\c4.py
+    Please input a number:0
+    you are True             #这里输入的是0，为什么得到的是true呢？	因为输入的0被接收成了字符串，字符串‘0’得到的就是true，需要把输入的数字用int()方法转换成整型才行。
+	
+---常量与pylint的规范
+    常量（constant）：常量的值不能改变，python中没有常量的概念，因为python没有机制去改变常量的值，但是有常量的定义，常量所有字母需要用大写，
+    pylin定义常量的规则：如果定义的变量不属于函数或者类，都认为是常量。应该用函数将零散的变量封装起来，直接将变量放在模块里是不好的习惯
+
+---通俗理解一个python文件就是一个模块，建议在文件开头用多行注释说明一下模块的介绍
+
+---语法标识符（冒号）前面不用空格	
+
+---逻辑运算符两边要空一格
+
+---缩进用4个空格
+	
+---流程控制语句之条件控制三 snippet，嵌套分支，代码块的概念
+ide小技巧
+snippet（片段）：作用是快速构建代码片段
+	
+if True：
+    pass   #空语句/占位语句
+
+---条件语句里面可以嵌套条件语句
+
+---不推荐代码嵌套太多层，可以用函数替代
+
+---流程控制语句之条件控制四——elif的优点,elif要与if配合使用
+    if a == 1:
+        print('apple')
+    elif a == 2:
+        print('orange')
+    elif a == 3:
+        print('banana')
+    else:
+        print('shopping')
+    
+
+---input()函数接收到的输入会认为是字符串，接收数字时需要转换一下（a = int(a)）
+
+------包，模块，函数与变量作用域
+
+---while循环与使用场景
+    两种循环：while（递归一般用while） ，for（主要用来遍历序列或者集合，字典）
+    counter = 1
+    while counter < 10:
+        counter += 1
+        print(counter)
+    else:
+        print('EOF')
+    while可以与else配合使用，也可以单独使用。while循环常和if配合使用，当达到某个条件时退出循环。
+
+---for与for-else循环
+    下面这段代码会打印列表中的所有元素，同时元素的分隔符为空格（默认的分隔符为换行符）
+    a = [['apple','orange','banana','grape'],(1,2,3)]   
+    for x in a:
+        for y in x:
+            print(y,end=' ')
+
+---for也可以与else配合使用，等for循环遍历完之后再执行else后面的语句，如果循环被break打断则不会运行else后面的代码。
+
+---break和continue的用法：执行到break时就跳出当前循环（如果是内层的循环，则退出内层的循环，外层的循环不会跳出），后面的语句不再执行。当执行到continue时则跳过后面的语句进入下一次循环
+    a = [1,2,3]
+    for x in a:
+        if x == 2:
+            break
+        print(x)
+	
+---for与range，
+    range()函数可以生成一个整数列表，range(start,stop[,step])
+    start:起始值，stop：计数到stop，但不包含stop， step：步长，不写默认是1，可以为负数
+
+    for x in range(0,10):
+        print(x)
+
+    >>> for i in range(0,5):print(i)
+
+    0
+    1
+    2
+    3
+    4
+    >>> for i in range(0,10,2):print(i)
+
+    0
+    2
+    4
+    6
+    8
+    >>> for i in range(10,0,-2):print(i,end=' | ')            #print这里可以定义分隔符
+    10 | 8 | 6 | 4 | 2 | 
+
+---打印列表a=[1,2,3,4,5,6,7,8]的奇数位
+    方法一：[1,2,3,4,5,6,7,8][0::2]
+    方法二：
+    for i in range(0,len(a),2):
+        print(a[i],end=' | ')
+
+-----高性能，封装性（可复用），抽象
+	
+---python工程的组织结构：包，模块，类
+    包（简单理解为文件夹），模块（类似于文件，模块里面应该主要是类，也可以包含函数和变量），类（包含函数和变量，将其组织起来）
+
+---python包与模块的名字
+    包的名字就是文件夹的名字
+    模块的名字就是文件的名字
+    不同包下面有相同名字的模块怎么区分呢？包名.模块名
+    包下面还可以有子包，子包可以和模块同级
+    一个文件夹需要成为包，则文件夹下必须有一个__init__.py文件（前后都是两个下划线），这个文件也是一个模块，可以什么都不写，也可以写一些代码。这个模块的名字不是包名.__init__,而是包名
+
+---import导入模块
+    import 只能导入模块，使用导入模块的变量时需要指明模块
+    import c7
+    import t.c7   #导入子包t下的模块c7，print(t.c7.a)打印c7下的变量a
+    import t.c7 as m   #给模块加个别名 ,print(m.a) 打印c7下的变量a
+
+---from import导入变量
+    from t.c7 import a  导入某个模块的变量，也可以导入函数，这时候可以直接使用变量或函数
+    from t import c7  这种方式也可以
+    from c9 import a, b, c
+    from t.c7 import *   #导入模块下的所有变量或函数，这时候也可以直接使用变量或函数不用加上模块名
+
+    #上面的import *导入了c7的所有变量，c7文件里面在文件前面用__all__ = ['a','c']可以限制只导入a和c两个变量，
+    像__all__ （前后有两个双下划线的变量在python中称为模块的内置变量或内置属性）
+
+
+---python代码一行建议最多80个字符，换行可以在行尾加上反斜杠(\)，也可以用括号换行，比如下面的例子
+    from c9 import (a, b,
+    c)
+
+---__init__.py的用法
+    导入包时被导入的包下面的__init__.py文件会自动执行，比如c11.py里面导入子包t（import t），
+    则在执行c11.py时t下面的__init__.py里面的代码会自动执行（比如__init__.py中定义了一个变量，并打印这个变量）
+    导入包下的模块甚至导入包下的模块下的变量，被导入的包下的__init__.py都会自动执行
+    真实项目场景中会在__init__.py文件中做一些包和模块的初始化工作
+
+    在t包下的__init__.py文件中可以用__all__ 变量定义哪些模块可以被from t import *导入，比如__init__.py中定义__all__ = ['a']，
+    则其他文件用import *导入t包下的所有模块时只能导入__all__中定义的模块，from t import b指定导入b模块是没问题的
+
+    导入包则包下的__init__.py会自动执行，利用这一点可以在包下的__init__.py文件中导入需要使用的库，如果需要导入的库很多，同时很多模块需要导入这些库，
+    则我们只要在__init__.py中导入这些库比如（sys,datetime,io这些python自带的内置库）即可，其他需要使用这些库的模块只要导入这个包就自动导入了这些库，
+    在模块中使用这些库时需要指定包名，比如print(t.sys.path)
+
+---包与模块的几个常见错误
+    包和模块是不会被重复导入的，比如模块t.c7被很多文件引用了，只会导入一次t.c7
+    避免循环导入，不管是直接循环还是间接循环。循环导入会报错
+    1）直接循环：p1.py中导入p2.py的变量，p2.py中又导入p1.py中的变量。
+    2）间接循环：p1.py中导入p2.py中的变量，p2.py中导入p3.py中的变量，p3.py导入p4.py中的变量，p4.py导入p1.py中的变量，形成一个闭环。
+
+    导入一个模块的时候被导入模块里面的代码会自动执行，在某个应用程序中无论有多少地方导入这块模块，被导入的模块只会执行一次
+
+---伪私有变量
+    前面加单下划线的变量称为私有变量，但这样的实例变量外部是可以访问的，虽然外部可以访问，但是请把它视为私有变量，不要随意访问。
+
+---真正的私有变量
+    前面加双下划线的变量是真正的私有变量，只有内部可以访问。但是有办法可以突破限制。
+
+---模块内置变量
+    模块内有一些自动生成的内置变量，这些内置变量以前后双下划线加字符串组成，如__name__(模块名字，包名.模块名),__package__（包名）,__doc__（模块的说明）,__file__（模块的绝对路径）
+
+    用dir()函数可以得到模块中所有的变量，包括内置变量和普通变量
+    dir()函数不带任何参数则返回当前模块的所有变量，当需要查看某个模块、函数或者类的变量，可以带上参数。
+
+    模块t.c
+    '''
+        This is a test module
+    '''
+    print('name: ' + __name__)
+    print('package: ' + __package__)
+    print('doc: ' + __doc__)
+    print('file: ' + __file__)
+    模块c1.py引用这个模块 import t.c，执行c1.py结果如下：
+    PS D:\python> python.exe .\c13.py
+    name:t.c
+    package:t
+    doc:
+        This is a test module
+
+    file:D:\python\t\c.py
+
+
+
+---入口文件和普通模块内置变量的区别
+1.py文件作为入口文件（执行的入口）时与1.py作为普通模块被导入时，内置变量的值是不一样的。
+当1.py作为入口文件时：__name__(值是__main__),__package__(入口文件不属于任何包)，__file__(值与执行路径相关，返回相对路径)
+当1.py作为普通模块被加载时：__name__（完整的模块名，如t.c9），__package__（模块所在的包），__file__（当前模块在系统中的绝对路径）
+
+---__name__的经典应用
+    1，if __name__ == '__main__':       #当这个py文件作为执行入口文件，则执行if条件下面的代码块。这个py文件可作为执行入口文件也可以作为普通模块被导入
+
+---python -m t.c9    #把一个可执行文件作为一个普通模块运行，
+
+---相对导入和绝对导入一
+    一般的python项目都有一个入口文件
+    入口文件不属于任何包，跟入口文件同级的包称为顶级包。
+    绝对导入就是从顶级包到被导入模块的绝对命名空间路径（顶级包.子包1.子子包…….模块，比如，package1.package2.module1），
+    相对导入用相对路径，相对路径一个.表示当前目录，两个..表示上级目录，三个...表示上上级目录，以此类推
+    入口文件不能使用相对导入，使用相对导入不能超出顶级包
+    import不能使用相对路径，相对导入要使用from import
+
+-----python函数
+---认识函数
+python有很多内置函数，比如print(),round().
+>>> round(1.2173,2)         #保留小数点后两位，这里会四舍五入
+1.22
+
+查看内置函数的帮助信息，需要在终端键入python进入交互模式，help(round)
+>>>import this     #查看python之禅
+函数的特点：
+1，功能性。 2，隐藏细节。3，避免编写重复的代码
+
+
+---函数的定义及运行特点
+    函数的定义：用def定义函数
+    def funcname(parameter_list):          
+        pas
+    1，parameter_list参数列表可以为空
+    2，函数体中可以使用return value返回值，如果没有用return返回值，默认返回None
+
+---自定义函数不要与python内置的函数同名
+
+-------编写一个自定义函数----------
+    def add(x,y):
+        result = x + y
+        return result
+
+    def print_code(code):
+        print(code)
+
+    a = add(1,2)
+    b = print_code('python')
+
+    print(a,b)
+    -------------------------------
+    执行的结果
+    PS D:\python\hanshu> python .\c1.py
+    python
+    3 None
+    第一行‘python’是函数print_code()打印出来的，第二行的3是print(a,b)打印出a的值，因为print_code函数没有使用return返回结果，所以b得到的值是None
+
+---print()函数可以填很多参数
+
+python有一个默认递归次数限制，一般是995次，如果要自定义这个递归次数可以使用如下方法
+import sys
+sys.setrecursionlimit(100000)
+
+---如何让函数返回多个结果
+    return单独出现时，return后面的语句不会执行。
+    return返回多个结果会返回一个元组
+    ----------------------------
+    def damage(skill1, skill2):
+        damage1 = skill1 * 3
+        damage2 = skill2 * 2 + 10
+        return damage1, damage2
+
+    skill1_damage, skill2_damage = damage(3,6)       #注意这种获取返回值的方法
+    print(skill1_damage, skill2_damage)
+    ------------------------------
+
+---序列解包与链式赋值
+    a,b,c = 1,2,3
+    d = 1,2,3   #这样赋值d是一个元组，可以用print(type(d))查看
+
+    a,b,c = d     #d是(1,2,3)，这就叫做序列解包，序列解包要求前面的变量跟后面序列的元素数量一致
+
+    a=b=c=1      #这就是链式赋值
+
+---必须参数与关键字参数
+    1，必须参数
+    形式参数（形参），定义函数时使用的参数
+    实际参数，调用函数时用的参数
+    2，关键字参数，调用函数时指定实参和形参的对应关系，如果不指定，则按顺序来。
+    指定关键字参数就可以不管参数顺序，这样可以改善代码的可读性
+    def add(x,y)
+
+    c = add(y=3,x=2)
+
+---默认参数
+    函数定义时给参数一个默认值
+    def print_student_files(name,gender=‘男’,age=18,college='解放小学')   这里定义函数时给一些形参定义了默认参数。
+    函数调用时，定义了默认参数的可以不带实参
+
+    调用函数：给了实参就用实参，没有给实参就用默认参数
+    print_student_files('小华')
+    print_student_files('小敏'，‘女’，16)  
+    print_student_files('小敏'，age=17,gender='女')     #指定关键字参数可以不管顺序
+
+    *函数定义时必须参数不能放在默认参数后面，必须参数之间不能夹杂默认参数
+    *函数调用时关键字参数中间不能混杂实参，比如:print_student_files('果果',gender='女',17,college='光明小学')，
+    这里默认参数中间夹杂了一个实参17，这样会报错。
+
+---可变参数
+    定义可变参数：在形参前面加上*号
+    def demo(*p):
+        print(p)
+        print(type(p))
+
+    调用的方式；
+    1，
+    a=(1,2,3,4,5,6)
+    demo(*a)
+
+    2,
+    demo(*[1,2,3,4,5,6])
+
+    3，
+    demo(1,2,3,4,5,6)
+
+    python会自动把可变参数列表所对应的实参组成一个元组。
+    可变参数可以和其他类型的参数结合使用，但可变参数必须放在后面。
+    函数的参数顺序是，必须参数，可变参数，默认参数，默认参数必须在最后;当需要改变默认参数的参数值，需要使用关键字参数指定。
+    最好避免混合使用多种参数。
+
+
+---关键字可变参数
+
+    ------------求一组数的平方和----------------
+    def squsum(*param):
+        sum = 0
+        for i in param:
+            sum += i*i
+        print(sum)
+    
+    squsum(1,2,3,4,5,6)
+    -----------------------------
+    可变参数一般用for循环遍历
+    
+    --------------------------
+    def city_temp(**param):
+        for key,value in param.items():         #注意这里的用法
+            print(key,':', value)
+    
+    
+    city_temp(bj='32c',xm='23c',sh='31c')     #调用方式一
+    
+    a = {'bj':'32c','xm':'23c','sh':'31c'}     #调用方式二
+    city_temp(**a)
+    --------------------------
+    可变参数在调用时可以不传参数
+
+---变量作用域
+    函数内部的变量仅作用于函数内部，函数内部可以引用外部的变量，函数外部不能引用函数内部的变量
+    函数外部的变量叫做全局变量，函数内部的变量叫做局部变量，局部变量是一个相对的概念，
+
+    分析下面几行代码
+    ··························
+    c = 50
+    def add1(x,y):
+        c = x + y
+        print(c)
+
+    add1(1,2)
+    print(c)
+    ································
+    执行结果是
+    3
+    50
+    # 函数外和函数内部都有定义变量C，但是函数内的变量c只作用在函数内部，
+    这两个变量名虽然一样，但是表示不同的变量，一个是全局变量作用在整个模块内部，
+    一个是局部变量作用在函数内部。
+    # 局部变量是一个相对的概念，局部变量不能作用到函数外，但是局部变量可以作用到函数内部的嵌套代码块中
+    python中代码块不能形成作用域，比如在函数内部嵌套一个for循环，在for循环内部定义一个变量，
+    则在函数中可以引用这个变量，如下的a变量；
+    ···································
+    def demo():
+        c = 50
+        for i in range(0,9):
+            a = 'a'
+            c += 1
+        print(c)
+        print(a)
+
+    demo()
+    ·································for循环内部的变量在循环外也可以被引用，这些for循环，条件语句等代码块内部的变量相当于函数的变量。
+    #函数里面嵌套函数的情况，内部嵌套函数可以引用外部函数的变量，可以向外逐级查找变量。这种概念就叫作用域链。
+    ·····················
+    c = 1
+
+    def func1():
+        # c = 2
+        def func2():
+            # c = 3
+            print(c)
+        func2()
+
+    func1()
+    ·····················
+
+---global关键字
+    # 全局变量不做特殊处理的话在整个应用程序中都是可以引用的，并不仅限当前模块中引用，
+    导入模块就能使用其中的全局变量。
+    # 函数内部定义的局部变量可以用global声明为全局变量，从而可以在函数外面引用这个变量，
+    其他模块导入这个模块也可以引用这个变量
+    ·····························
+    def demo():
+        global c         #注意这里要先声明，然后才能赋值，不然会报错
+        c = 2
+
+    demo()               #注意这里要先调用函数
+    print(c)
+    ·····························
+
+python最适合用来解决问题
+
+-----面向对象
+---类的定义
+    class 定义类
+    # 类的命名规则，建议首字母大写，多个单词建议每个单词的首字母都大写（驼峰连接）而不是用下划线连接，class Student():
+    # 类最基本的作用就是封装，类只用来定义，不要在类内部调用。类内部可以定义变量，函数。类中的函数需要带上self参数，类中函数引用类的变量需要加上self.变量名。
+    项目中一般定义类和使用类放在不同的模块。
+    ···································
+    class Student():
+        name = ''
+        age = 0
+
+        def print_file(self):                    #类里面的函数需要带上self参数
+            print('name: ' + self.name)           #类变量的引用需要加上self
+            print('age: ' + str(self.age))
+
+    class StudentHomework():           #类名建议每个单词首字母大写（驼峰连接），不需要连接符
+        homework_name = ''
+
+    
+    在其他模块实例化调用类
+    from c7 import Student
+    student = Student()     #实例化类
+    student.print_file()     #调用类下面的方法
+    ···································
+
+---浅谈函数与方法的区别
+
+---类与对象
+    # 类和对象是什么，之间有什么关系
+    类是现实世界或思维世界中的实体在计算机中的反映，它将数据以及对这些数据的操作封装在一起。类：行为（方法）与特征（变量），
+    在类中定义方法时要注意这个方法是否是该类的行为？比如定义学生类，将家长类的行为定义到学生类中是不合适的。
+    对象是类的实例，比如学生是类，小明就学生类的一个实例。
+
+---构造函数：def __init__(self):
+    # 构造函数在实例化时会被自动调用，当然也可以显示调用构造函数（实例化之后，调用student1.__init__()），显示调用时构造函数相当于一个普通函数。
+    构造函数的返回是None,不能返回其他类型，如果在构造函数中用return 返回其他类型会报错。
+    # 构造函数的作用：在类中生成不同的对象（初始化对象的属性）
+    ························
+    class Student():
+        name = ''
+        age = 0
+
+        def __init__(self,name,age):               #构造函数的定义
+            name = name
+            age = age
+    
+    
+    实例化
+    student = Student('小明',18)                #实例化一个类
+    print(student.name)                         #这里打印对象的一个变量，注意这里并不会打印出"小明"，而是空，为什么呢？
+    ························
+---区别模块变量与类中的变量
+
+---类变量与实例变量
+    类变量：和类相关联的变量
+    实例变量：与对象相关联的变量
+    ········································
+    class Student():
+        # 一个班级的学生总数,类变量
+        sum = 0
+        name = ''
+        age = 0
+
+        def __init__(self, name, age):
+            # 这里用self.name表示对象的变量，这里的self不是关键字，因为可以是任意字符，但是推荐用self
+            self.name = name
+            self.age = age
+
+    student1 = Student('小明',17)
+    student2 = Student('小华',19)
+    print(student1.name)
+    print(student2.name)
+    print(Student.sum)
+    ········································
+
+---类与对象的变量查找顺序
+    # 对象中的内置变量__dict__里面包含了对象中的所有变量
+    # 当访问对象的变量时会遍历对象的所有变量，如果访问的变量不存在则会从类变量中查找，如果类变量中有这个变量则返回该变量。
+    ·························
+    class Student():
+        sum = 0
+        name = 'qiyue'
+        age = 0
+
+        def __init__(self, name, age):
+            name = name
+            age = age
+
+    student1 = Student('xiaoming', 17)
+    # 对象或者类的内置变量__dict__的值包含对象或者类中的所有变量
+    print(student1.__dict__)
+    print(Student.__dict__)
+    ·························
+    执行结果：
+    PS D:\python\hanshu> python.exe .\c10.py
+    {}
+    {}
+    {'__module__': '__main__', 'sum': 0, 'name': 'qiyue', 'age': 0, '__init__': <function Student.__init__ at 0x000001D5264F7EA0>, '__dict__':
+    <attribute '__dict__' of 'Student' objects>, '__weakref__': <attribute '__weakref__' of 'Student' objects>, '__doc__': None}
+    这里因为对象的变量使用方式有误，所以对象中没有变量，对象变量正确的定义方式是self.name, self.age。
+    ············································
+    class Student():
+        sum = 0
+        name = 'qiyue'
+        age = 0
+
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+
+    student1 = Student('xiaoming', 17)
+    print(student1.__dict__)
+    ············································
+    执行结果：
+    PS D:\python\hanshu> python.exe .\c10.py
+    {'name': 'xiaoming', 'age': 17}
+
+---self与实例方法
+    # 定义实例方法的时候需要在参数列表中加上self参数（这是python规定的），但是调用实例方法不需要加上self参数。这里的self不是关键字，也就是说这里可以是任意字符代替self，只是推荐用self
+    # self代表的是实例
+    # 实例方法：实例可以调用的方法
+
+---在实例方法中访问实例变量与类变量
+    # 构造函数可以看成一个特殊的实例方法，构造函数不用显示调用，实例方法用来描述类的行为，构造函数作用在于初始化类的各种特征的。
+
+    # 在实例方法中访问实例变量要在实例变量前面加上self.
+    # 在实例方法中访问类变量的方式1：使用 类名.变量名   方式2: 使用 self.__class__.变量名
+
+
+---类方法，类方法的作用就是操作类相关的变量
+    ·························
+    class Student():
+        sum = 0
+
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+            self.__class__.sum += 1
+            print('当前班级学生总人数： ' + str(self.__class__.sum))
+
+    student1 = Student('xiaoming', 17)
+    student2 = Student('xiaohua', 17)
+    student3 = Student('xiaolong', 17)
+    ·························
+
+
+    定义类方法：装饰器@classmethod下面定义的方法就叫类方法，这里参数终中的cls跟self一样不是关键字，也可以换成其他字符，但是推荐用cls，表示类的意思
+        @classmethod
+        def plus_sum(cls):
+            cls.sum += 1
+            print(cls.sum)
+    
+    调用类方法：Student.plus_sum(), 类方法还可以用对象调用，但是不建议这样调用。
+
+---静态方法
+        @staticmethod
+        def add1(x,y):      #这里不需要传入指代参数
+            print('this is a static method'
+    静态方法可以用类调用，也可以用对象调用，静态方法也可以调用类变量（类名.变量名），好像无法调用实例变量。
+    静态方法一般很少用，静态方法好像没必要，与类或对象相关的操作有类方法和实例方法好像就够了。
+
+---成员可见性：公开和私有
+    # 变量和方法的可见性
+    # 类外部可以调用类里面的方法，类内部的方法也可以调用类内部的其他方法。
+    # 类外部可以访问类的方法和变量，这就有一个类安全的问题。
+    # 类里面的变量都是类的特征描述，修改变量的值不提倡直接通过外部访问变量直接赋值，而应该通过方法去改变变量的值，因为方法里面可以做判断，而访问变量直接赋值无法判断。
+    # 类里面的方法和变量没有特殊说明都是公开的，可以从外部直接访问，但是在类内部的变量名和方法名前面加上双下划线(__)则该变量和方法就成了私有的，外部直接访问会报错（私有变量不能读取也不能赋值）。
+    变量名前后都有双下划线那是内置变量的用法，自定义的变量不建议用这种定义方式，前后都有双下划线的变量是公开的。
+
+---没有什么是不能访问
+    看下面的代码
+    ························
+    class Student():
+        sum = 0
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+            self.__score = 0
+
+        def marking(self, score):
+            if score < 0:
+                return '不能打负分'
+            self.__score = score
+            print(self.name + '同学本次考试的分数为：' + str(self.__score))
+
+    sutdent1 = Student('xiaoming', 17)
+    sutdent1.__score = -1             #不是说私有变量不能从外部访问么，那这里一定会报错，但是实际这里不会报错。因为python的动态特性，这里会给实例新增一个__score的变量。可以看下面__dict__的输出。
+    print(sutdent1.__score)
+    print(sutdent1.__dict__)
+
+    执行结果：
+    PS D:\python\hanshu> python.exe .\c11.py
+    -1
+    {'name': 'xiaoming', 'age': 17, '_Student__score': 0, '__score': -1}        
+    #这里有两个score变量，实际上实例的私有变量__score被改名成了_Student__score。其实类外部通过student1._Student__score 可以访问到实例私有变量。
+    ························
+
+---继承
+    面向对象3大特性：继承性，封装性，多态性
+    继承：避免属性和方法的重复定义，子类可以继承父类的属性和方法
+    ·······································
+    父类，在c12.py模块下
+    class Human():
+        sum = 0
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+
+        def get_name(self):
+            print(self.name)
+    ·······································
+    子类
+    from c12 import Human       #先导入类
+
+    class Student(Human):       #继承Human类
+
+        def do_homework(self):
+            print('english homework')
+
+    student1 = Student('xiaoming', 18)      #虽然Student类没有构造函数，但是父类有构造函数，这里继承了父类的构造函数，需要传递必须的参数，否则会报错。
+    print(student1.sum)                     #对象引用父类变量
+    print(Student.sum)                      #类引用父类变量
+    print(student1.name)                    #实例引用父类的实例变量
+    print(student1.age)                     #同上
+    student1.get_name()                      #实例调用父类的方法
+
+    #python中一个子类可以继承多个父类，很多其他编程语言子类只能继承一个父类。
+
+    ·············································
+    from c12 import Human
+
+    class Student(Human):
+        def __init__(self, school, name, age):       #子类的构造函数这里包含父类构造函数需要的参数
+            self.school = school
+    		#调用父类的构造函数这里需要加上self参数，不加会报错。构造函数是实例化时python自动去调用，会给我们加上self参数，
+    		但是这里是一个普通函数的调用，构造函数可以看成一个实例方法。而且这是类调用一个实例方法，需要加上self参数。
+    		不是一般调用类的方法不用加self参数么？当一个对象调用实例方法时python会把对象传递给self参数，但是当类调用实例方法时需要自己加上self参数。
+    		这里是一个类调用一个实例方法，虽然这在技术上是可以的，但这是不推荐的用法，正常应该是对象来调用实例方法。
+    		不建议用这种方法调用父类的方法，如果子类继承的父类名发生变化，则这种调用父类的方法就有很多地方需要修改。
+            Human.__init__(self, name, age)          
+
+        def do_homework(self):
+            print('english homework')
+
+    student1 = Student('解放小学', 'xiaoming', 18)
+    student1.do_homework()       #对象调用实例方法就不用传递self参数，因为python自动会把实例student1传递给self。
+    # Student.do_homework()     如果用类调用实例方法不传递参数的话就会报错，如果带上给self带上参数就可以，比如，Student.do_homework(student1)但是这完全多此一举，直接用对象调用实例方法就好。
+    print(student1.name)
+    print(student1.age)
+    ·············································
+
+---子类方法调用父类方法：super关键字
+    ·············································
+    父类，在c12
+    class Human():
+        sum = 0
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+
+        def get_name(self):
+            print(self.name)
+
+        def do_homework(self):
+            print('This is parent method')
+    
+    子类，
+    from c12 import Human
+
+    class Student(Human):
+        def __init__(self, school, name, age):
+            self.school = school
+            super(Student, self).__init__(name, age)       #调用父类的方法
+
+        def do_homework(self):
+            super(Student, self).do_homework()            #调用父类的方法，这里父类和子类有两个同名的方法do_homework()，
+            print('english homework')
+
+    student1 = Student('解放小学', 'xiaoming', 18)
+    student1.do_homework()                #当父类和子类有两个同名的方法时，调用的是子类的方法。
+    ·············································
+isinstance(student1,Human)    #判断student1是否是Human的子类
+python3中所有的对象都继承object类
+
+-----正则表达式与json
+    ---初识正则表达式
+    python中提供了一个内置模块re，里面有很多方法可操作正则表达式
+    ·························································
+    import re
+    a = 'C|C++|Java|C#|Python|Javascript|Pn'
+    r = re.findall('P[^|]*n', a)
+    if len(r) > 0:
+        print('字符串中包含PHP')
+    else:
+        print('No')
+    这里的findall('P[^|]*n', a)方法是在变量中找指定的正则表达式的字符串，返回的结果是列表。
+    ·························································
+---元字符与普通字符
+    \d 表示数字（0-9）
+    \D 非数字
+    \n 匹配换行符
+    [ef] 包含e或f
+    [^ef] 不包含ef
+    [a-z] 包含a到z的字母
+    \w 包括单词字符(包括下划线)，相当于[A-Za-z0-9_]
+    \W 匹配非单词字符，比如&，空格，回车（\n），\r，制表符(\t)等
+    \s 匹配空白字符，空格，回车，换行等
+    \S  匹配非空白字符
+    . 匹配除换行符之外的所有字符
+---数量词
+    [a-z]{3}  匹配三次
+    [a-z]{3,6} 匹配三至六次
+
+---贪婪与非贪婪
+    默认情况下python倾向于是贪婪的匹配模式，尽可能匹配更多的位。
+    非贪婪模式：[a-z]{3,6}?,这数量词后面加上问号。  这里相当于[a-z]{3}
+    [a-z]*   匹配任意次
+    [a-z]+   匹配至少一次
+    [a-z]?   匹配0次或一次
+
+---边界匹配符
+    ^  
+    $ 
+
+---组
+    (python){3} 括号里面的字符串称为一个组，这里表示这一组表达式匹配三次
+
+---匹配模式参数
+    ·······························
+    import re
+    
+    a = 'ptyon &33#java_C#\n88,,C'
+    r = re.findall('c#.{1}', a, re.I | re.S)             #匹配模式re.I 表示匹配忽略大小写，re.S 表示.可以包含换行符在内的任意字符。这里这两个匹配模式都会生效。
+    print(r)
+    ·······························
+
+---re.
+     正则替换，匹配然后替换
+    ··········································
+    import re
+
+    a = 'ptyon &33#java_C#88,,C#&phpC#'
+    r = re.sub('C#', 'GO', a, 1)            #把第一个匹配到的C#（这里可以是正则表达式）替换成GO。第四个参数表示替换多少次，默认是0可不写,表示不限制替换次数，匹配到了就都替换。
+    print(r)
+    ··········································
+    变量有一个内置函数replace()的作用也是替换，如下列
+    ··········································
+    import re
+
+    a = 'ptyon &33#java_C#88,,C#&phpC#'
+    r = a.replace('C#', 'GO')         #把C#替换成GO
+    print(r)
+    ··········································
+    re.sub相较于变量的内置函数replace()功能更强大，re.sub 第一个参数可以是正则表达式，第二个参数可以是函数。正则表达式匹配到的字符串作为参数传递给函数，这样就能根据匹配的字符串做动态替换。
+    ··········································
+    import re
+
+    def convert(value):
+        print(value)
+
+    a = 'ptyon &33#java_C#88,,C#&phpC#'
+    r = re.sub('C#', convert, a)
+    print(r)
+    执行结果：
+    PS D:\python\ten> python.exe .\c5.py
+    <re.Match object; span=(15, 17), match='C#'>
+    <re.Match object; span=(21, 23), match='C#'>
+    <re.Match object; span=(27, 29), match='C#'>
+    ptyon &33#java_88,,&php
+    可以看到传递给convert函数的参数并不是一个字符串，而是一个对象，这里面包含了匹配到字符串的位置等信息。这样才能获得匹配到的字符串呢？对象有一个内置函数group()可以实现。
+    ··········································
+
+    ··········································
+    import re
+
+    def convert(value):                  #函数内部就可以根据匹配到的不同字符串做运算得到不同的返回值。
+        matched = value.group()           #注意对象内置函数group的用法。
+        return '!!' + matched + '!!'
+
+    a = 'ptyon &33#java_C#88,,C#&phpC#'
+    r = re.sub('C#', convert, a)          #第一个参数是正则表达式的话，第二个参数是函数可以做很灵活的替换
+    print(r)
+    ··········································
+
+---把函数作为参数传递
+
+    看一个例子：把一串字符串中大于等于6的数字替换成9，小于6的数字替换成0
+    ··········································
+    import re
+    s = 'A8C3721D86'
+
+    def convert(value):
+        matched = value.group()    
+        if int(matched) >= 6:      #matched这里获取到的是字符串，要先转换成整型
+            return '9'             #正则表达式操作的是字符串，这里要返回字符串
+        else:
+            return '0'
+
+    r = re.sub('\d', convert, s)
+    print(r)
+    ··········································
+
+---search与match函数
+    findall函数比这两个函数好用一下，findall函数返回的直接是列表。
+    ··········································
+    import re
+
+    s = 'A8C3721D86'
+
+    r = re.match('\d', s)           #match函数从第一个字符串开始匹配，如果没有匹配上就返回None，不会从第二位以及后面的位开始匹配。如果匹配到则返回一个对象
+    print(r)
+    r1 = re.search('\d',s)         #search函数从字符串中查找匹配的子字符串，一旦匹配到就返回，不会继续往下查找。如果匹配到则返回一个对象。
+    print(r1)
+
+    执行结果：
+    PS D:\python\ten> python.exe .\c7.py
+    None
+    <re.Match object; span=(1, 2), match='8'>
+    ··········································
+
+
+    ··········································
+    import re
+
+    s = '8C3721D86'
+
+    r = re.match('\d', s)
+    print(r.span())                  #返回匹配到的子字符串的位置
+    r1 = re.search('\d',s)
+    print(r1.group())
+
+    执行结果：
+    PS D:\python\ten> python.exe .\c7.py
+    (0, 1)
+    8
+    ··········································
+
+--group分组
+    把'life is short, i use python' 这句话中life和python之间的内容打印出来
+    ··········································
+    import re
+
+    s = 'life is short, i use python'
+    # s = 'life is short, i use python, i love python'
+    r = re.search('life(.*)python', s)         #这里使用了分组(.*)
+    print(r.group(1))                          #group()函数如果不传递参数，默认是0，就是打印匹配的完整字符串，参数是1，表示打印第一个分组。
+
+    执行结果：
+    PS D:\python\ten> python.exe .\c8.py
+     is short, i use
+    ··········································
+    用findall实现
+    ··········································
+    import re
+
+    s = 'life is short, i use python'
+    r = re.findall('life(.*)python', s)
+    print(r)
+    执行结果：
+    PS D:\python\ten> python.exe .\c8.py
+    [' is short, i use ']
+    ··········································
+
+    ··········································
+    import re
+
+    s = 'life is short, i use python, i love python'
+    r = re.search('life(.*)python(.*)python', s)
+    print(r.group(0, 1, 2))
+    执行结果：
+    PS D:\python\ten> python.exe .\c8.py
+    ('life is short, i use python, i love python', ' is short, i use ', ', i love ')     #返回一个元组
+    ··········································
+
+    ··········································
+    import re
+
+    s = 'life is short, i use python, i love python'
+    r = re.search('life(.*)python(.*)python', s)
+    print(r.groups())                  #groups()只会返回匹配到的分组，不会打印匹配到的完整字符串。
+    执行结果：
+    PS D:\python\ten> python.exe .\c8.py
+    (' is short, i use ', ', i love ')
+    ··········································
+
+---JSON
+    JavaScript Object Notation
+    是一种轻量级的数据交换格式，字符串是json的表现形式。相较于xml的优势：易于阅读，易于解析，网络传输效率高，跨语言交换数据（xml也有这个特性）。
+    python中有一个json模块，json模块下有一个loads函数可以把json的字符串转换成python的数据类型，比如字典等。
+    编程语言中字符串到某种语言数据类型的转换过程叫反序列化。
+    json定义规定字符串要用双引号引用起来。
+
+    ··········································
+    import json
+
+    json_str = '{"name":"qiyue", "age":18}'     #json要求字符串要用双引号，不然会报错。这是一个json对象
+
+    student = json.loads(json_str)
+    print(type(student))
+    print(student)
+
+    执行结果：
+    PS D:\python\ten> python.exe .\c9.py
+    <class 'dict'>
+    {'name': 'qiyue', 'age': 18}          #用loads函数转换成了字典类型（其他语言可能会转换成其他数据类型）。然后就可以用字典的访问方法访问字典里的元素。
+    ··········································
+
+    json_array = '[{"name":"qiyue", "age":18, "flag":false}, {"name":"xiaoming", "age":19}]'      #这里是由两个json object(对象)组成的json array(数组)
+    ··········································
+    import json
+
+    json_array = '[{"name":"qiyue", "age":18, "flag":false}, {"name":"xiaoming", "age":19}]'      #json里面布尔类型是小写
+    student = json.loads(json_array)
+    print(type(student))
+    print(student)
+
+    执行结果：
+    PS D:\python\ten> python.exe .\c9.py
+    <class 'list'>
+    [{'name': 'qiyue', 'age': 18, 'flag': False}, {'name': 'xiaoming', 'age': 19}]        #json array(数组)被转换成了python的列表。这里把json的布尔类型转换成了pythoh的布尔类型（首字母大写）
+
+    ··········································
+
+    JSON与Python的数据类型转换对应关系
+    JSON        Python
+
+    object      dict
+    array       list
+    string      str
+    number      int
+    number      float
+    true        True
+    false       False 
+    null        None
+
+---序列化
+    把python数据类型转换成json数据类型（python数据类型转换成xml数据类型也叫序列化）
+    ··········································
+    import json
+    student = [                                              # 这里用括号引用多行
+                {'name': 'qiyue', 'age': 18, 'flag': False},
+                {'name': 'xiaoming', 'age': 19}
+            ]
+
+    json_str = json.dumps(student)             #序列化用dumps函数
+    print(type(json_str))
+    print(json_str)
+
+    执行结果：
+    PS D:\python\ten> python.exe .\c10.py
+    <class 'str'>
+    [{"name": "qiyue", "age": 18, "flag": false}, {"name": "xiaoming", "age": 19}]
+    ··········································
+
+---JSON对象，JSON, JSON字符串
+json对象：
+
+
+-----Python高级语法与用法
+    ---枚举其实是一个类，枚举类和其他类是有区别的。python2中没有枚举。
+    用枚举表示不同的类型，
+    定义枚举，就是在类下面定义了一组常量，常量命名建议用大写。枚举是Enum的子类
+
+    ··········································
+    from enum import Enum
+
+    class VIP(Enum):         #枚举是继承Enum类的类
+        YELLOW = 1
+        GREEN = 2
+        BLACK = 3
+        RED = 4
+
+    print(VIP.YELLOW)              #这里打印的并不是1，而是这个常量的名字，显示常量的名字才有意义，
+    执行结果：
+    PS D:\python\eleven> python.exe .\c1.py
+    VIP.YELLOW
+    ··········································
+
+---枚举和普通类相比有什么优势
+    表示各种类型，比如上面例子中vip的各种类型，在python中可以用多种方法，比如字典，{'yellow':1, 'green':2},
+    或者在普通类中定义变量
+    class comm():
+    	yellow =1
+    	green =2
+    但是枚举相较于这两种方式的优势有两个：
+    第一，不可变，枚举里的常量值不可变，而字典和普通类里面的变量的值都是可变的，而类型一般是不变的。
+    第二，可以保证类型的值不重复，字典和普通类变量的值是可变的也可以相同。	
+
+---枚举类型、枚举名称与枚举值
+    ··········································
+    from enum import Enum
+
+    class VIP(Enum):
+        YELLOW = 1
+        GREEN = 2
+        BLACK = 3
+        RED = 4
+
+    print(VIP.YELLOW.value)           #枚举标签的值
+    print(VIP.YELLOW.name)            #枚举标签名，是str类型
+    print(type(VIP.YELLOW.name))
+    print(VIP.YELLOW)                  #枚举的标签，是枚举的一个类型
+    print(type(VIP.YELLOW)
+    print(VIP['YELLOW'])                #通过枚举名称获取枚举类
+    执行结果：
+    PS D:\python\eleven> python.exe .\c1.py
+    1
+    YELLOW
+    <class 'str'>
+    VIP.YELLOW
+    <enum 'VIP'>
+    ··········································
+
+---遍历枚举
+    ··········································
+    from enum import Enum
+
+    class VIP(Enum):
+        YELLOW = 1
+        GREEN = 2
+        BLACK = 3
+        RED = 4
+
+    for v in VIP:
+        print(v)
+    执行结果：
+    PS D:\python\eleven> python.exe .\c1.py
+    VIP.YELLOW
+    VIP.GREEN
+    VIP.BLACK
+    VIP.RED
+    ··········································
+
+---枚举的比较运算
+    枚举之间可以做相等比较，不能做大小比较
+    result1 = VIP.GREEN == VIP.BLACK    #可以做相等比较
+    result2 = VIP.GREEN > VIP.BLACK    #做大小比较会报错
+    result3 = VIP.GREEN is VIP.GREEN    # 身份比较也是可以的
+
+---枚举注意事项
+    枚举的标签不能重复。如果两个标签的值一样，则第二个标签是第一个标签的别名。遍历时如果某个标签有别名，则别名不会被遍历。如果想要别名也被遍历，可以遍历枚举类的__member__属性。
+    ··········································
+    from enum import Enum
+
+    class VIP(Enum):
+        YELLOW = 1
+        YELLOW_ALIAS = 1
+        GREEN = 2
+        BLACK = 3
+        RED = 4
+
+    for v in  VIP.__members__:
+        print(v)
+    执行结果：
+    PS D:\python\eleven> python.exe .\c1.py
+    YELLOW
+    YELLOW_ALIAS
+    GREEN
+    BLACK
+    RED
+    ··········································
+
+---枚举转换
+    代码中建议用枚举标签（可读性强），数据库中建议用标签的值，那怎么通过标签的值获取标签呢？
+    ··········································
+    from enum import Enum
+
+    class VIP(Enum):
+        YELLOW = 1
+        GREEN = 2
+        BLACK = 3
+        RED = 4
+
+    a = 1
+    print(VIP(a))         #枚举类的方法可以直接获取到标签
+    ··········································
+
+---枚举小结
+    # 如果要求枚举类里面标签的值是整型不能是其他类型，则可以用IntEnum类
+    from enum import IntEnum
+    # 如何规避枚举中标签的值相等呢？这里可以引用一个装饰器unique，如果枚举中有标签的值相等则会报错。用法如下
+    ··········································
+    from enum import IntEnum,unique
+
+    @unique
+    class VIP(IntEnum):
+        YELLOW = 1
+        GREEN = 1
+        BLACK = 3
+        RED = 4
+
+    print(VIP.YELLOW)
+    执行会报错
+    ··········································
+    枚举是单例模式，不能实例化
+
+---一切皆对象
+
+---闭包：
+    python中函数是对象，其他语言中函数是一段可执行的代码。
+
+---什么是闭包
+    闭包：由函数定义时的环境变量（函数外部的变量）组成
+    函数里嵌套函数时，内部函数引用了外部函数的变量，这种方式就叫闭包。外部函数的return是内部函数的函数名。
+    闭包 = 函数 + 环境变量（函数定义时的外部变量，不是全局变量）
+    ··········································
+    def curve_pre():
+        def curve():
+            print('This is a function')
+        #函数可以作为返回结果
+        return curve
+    #函数可以赋值给变量
+    f = curve_pre()
+    f()      #这里实质是调用curve_pre()函数内部的函数curve()
+    执行结果：
+    PS D:\python\eleven> python.exe .\c3.py
+    This is a function
+    ··········································
+
+    ··········································
+    def curve_pre():
+        a = 25
+        def curve(x):
+            return a * x * x
+        return curve         #这里不仅仅是返回一个函数，还是返回一个闭包
+
+    a = 10
+    f = curve_pre()
+    print(f.__closure__)      #闭包的环境变量保存在__closure__内置变量中
+    print(f.__closure__[0].cell_contents)         #取出闭包的环境变量
+    print(f(2))      #这里相当于调用函数curve(2)，但是这个子函数里面没有定义a的值，那这个a的值是取模块中的a值，还是函数curve_pre()中定义的a值呢？
+    执行结果：
+    PS D:\python\eleven> python.exe .\c4.py
+    (<cell at 0x00000171F5880768: int object at 0x00007FFBB9ADE650>,)
+    25
+    100              #根据结果可知，a取的是函数curve()外部定义的值。闭包的概念：是由函数及函数定义时外部的环境变量组成的整体。
+    这里函数curve()和定义时的变量a=25在一个闭包内。在任何地方调用该函数时，a的值不会受影响，还是25.这就是闭包。
+    ··········································
+
+    闭包保存的是一个环境（现场），
+    ··········································
+    def f1():
+        a = 10
+        def f2():
+            a = 20
+            print(a)
+        print(a)
+        f2()
+        print(a)
+
+    f1()
+    执行结果：
+    PS D:\python\eleven> python.exe .\c5.py
+    10
+    20
+    10
+    ··········································
+
+闭包经典用例--计数器，调用一次计数一次。
+    ··········································
+    def conter():
+        cnt = [0]            #定义一个只含一个元素的列表，默认值为0
+        def add_one():
+            cnt[0] += 1
+            return cnt[0]
+        return add_one
+
+    num1 = conter()
+    print(num1())
+    print(num1())
+    print(num1())
+    ··········································
+
+---闭包的经典误区
+    ··········································
+    def f1():
+        a = 10
+        def f2():
+            a = 20
+            print(a)
+        return f2
+
+    f = f1()
+    print(f)
+    print(f.__closure__)
+    执行结果：
+    PS D:\python\eleven> python.exe .\c5.py
+    <function f1.<locals>.f2 at 0x00000273DB837EA0>
+    None              #这里为什么没有闭包的环境变量？因为f2中定义了局部变量a = 20，没有引用外部的环境变量，所以没有形成闭包。
+    ··········································
+
+---
+函数式编程
+面向对象编程
+··········································
+写一个程序，计算走的步数，从0点开始，第一次走两步，第二次在第一次的基础上走三步，等等。
+origin = 0
+
+def go(step):
+    new_pos = origin + step
+    origin = new_pos
+    return origin
+
+print(go(2))
+print(go(3))
+print(go(6))
+执行结果：
+PS D:\python\eleven> python.exe .\c6.py
+Traceback (most recent call last):
+  File ".\c6.py", line 8, in <module>
+    print(go(2))
+  File ".\c6.py", line 4, in go
+    new_pos = origin + step
+UnboundLocalError: local variable 'origin' referenced before assignment
+#这里为什么会报错？这里的报错信息说origin在使用前没有定义。可是在模块的前面不是定了一个origin的全局变量么？
+原因是在go()函数中也定义origin这个变量，然后python就会把origin当成局部变量，不会从函数外去找origin变量，但是在函数中定义origin变量在使用origin变量后面，所以会报错。
+··········································
+
+··········································
+以非闭包的方式实现
+origin = 0
+
+def go(step):
+    global origin 
+    new_pos = origin + step
+    origin = new_pos
+    return origin
+
+print(go(2))
+print(go(3))
+print(go)
+··········································
+
+··········································
+闭包实现方式
+origin = 0
+
+def factory(pos):
+    def go(step):
+        nonlocal pos                 #这里声明pos为非局部变量
+        new_pos = pos + step
+        pos = new_pos
+        return new_pos
+    return go
+
+tourist = factory(origin)
+print(tourist(2))
+print(tourist(3))
+print(tourist(5))
+··········································
+尽量少使用全局变量，很多函数都会改变全局变量，这样函数就没有自封闭性，执行结果很容易受其他函数影响。闭包会保存现场
+
+---函数式编程
+
+-----匿名函数
+    ---lambda表达式
+    匿名函数：定义函数时不需要定义函数名
+    定义匿名函数： lambda parameter_list: expression               #parameter_list是参数列表，expression是表达式，这里不能是很复杂的代码块，而只能是表达式。示例如下：
+    lambda x,y: x + y      #这里不用return，会直接返回x+y的值，这里可以把这个函数赋值给变量f，然后用变量f来调用这个匿名函数f(1,2)，但这不是匿名表达式建议的调用方式。
+
+    lambda x,y: a=x+y   #这里会报错，因为a=x+y不是表达式
+
+---三元表达式
+    表达式版本的if，else语句。
+    其他语言的三元表达式：x > y ? x : y   如果x大于y则返回x，否则返回y
+    python的三元表达式: 条件为真时的返回结果 if 条件判断 else 条件为假是的返回结果
+    x if x > y else y  可以将这个表达式的结果赋值给一个变量，三元表达式在匿名函数中比较常用。
+
+---map 映射
+    map class map(func, *iterables)      #map是一个类，接受两个参数，第一个参数是函数，第二个参数是集合或者列表，作用是把第二个参数里面的每个元素都作为第一个参数函数的参数去执行，相当于for循环
+
+    示例：
+    ··········································
+    list_x = [1,2,3,4,5,6,7]
+
+    def square(x):
+        return x * x
+
+    r = map(square, list_x)       #把list_x中的每个元素都作为square的参数调用这个函数
+    print(r)
+    print(list(r))
+    执行结果：
+    PS D:\python\twl> python.exe .\c2.py
+    <map object at 0x00000284753FE438>       #map得到的是一个对象
+    [1, 4, 9, 16, 25, 36, 49]
+    ··········································
+
+---map与lambda
+    map与lambda结合
+    ··········································
+    list_x = [1,2,3,4,5,6,7]
+    r = map(lambda x: x*x, list_x)
+    print(list(r))
+    执行结果：
+    PS D:\python\twl> python.exe .\c3.py
+    [1, 4, 9, 16, 25, 36, 49]
+    ··········································
+
+    ··········································
+    list_x = [1,2,3,4,5,6,7]
+    list_y = [1,2,3,4,5,6,7]
+    r = map(lambda x, y: x*x + y, list_x, list_y)           #这里map的参数列表可以是多个。lambda这里有几个参数，后面的参数列表就要几个。
+    print(list(r)
+    ··········································
+
+    ··········································
+    list_x = [1,2,3,4,5,6,7]
+    list_y = [1,2,3,4]
+    r = map(lambda x, y: x*x + y, list_x, list_y)
+    print(list(r)
+    执行结果：
+    PS D:\python\twl> python.exe .\c3.py
+    [2, 6, 12, 20]         #这里的元素个数取决于元素最少的参数列表，这里的list_x只有四个元素，所以这里也只有四个。
+    ··········································
+
+---reduce
+    reduce下的函数一定要有两个参数
+    reduce做连续计算，连续调用lambda。
+    看下面的例子
+    ··········································
+    from functools import reduce      #导入reduce
+
+    list_x = [1,2,3,4,5,6,7]
+    # 这里lambda有两个参数，但是后面的参数列表只有一个。这里的逻辑是这样的，首先从list_x中取前两个元素赋值给x、y,得到的结果赋值再赋值给x，
+    然后取list_x的第三个元素赋值给y，这样循环下去。(((((1+2)+3)+4)+5)+6)
+    r = reduce(lambda x,y:x+y, list_x)    
+    print(r)
+    执行结果：
+    PS D:\python\twl> python.exe .\c4.py
+    28
+    ··········································
+
+    # reduce函数可以带三个参数比如上面的例子中reduce(lambda x,y:x+y, list_x，10)，这里第三个参数是一个初始值，其运算过程同(((((10+1)+2)+3)+4)+5),
+    用字符串的合并更能清楚的看到运算过程
+    ··········································
+    from functools import reduce
+
+    list_x = ['1','2','3','4','5','6','7']
+    r = reduce(lambda x,y:x+y, list_x, 'bbb')
+    print(r)
+    执行过程：
+    PS D:\python\twl> python.exe .\c4.py
+    bbb1234567
+    ··········································
+
+map/reduce 大数据编程模型  映射 规约，并行计算
+
+---filter 过滤器
+    过滤一些我们不需要的元素（可以理解为过滤掉布尔类型为False的元素）
+    filter(function or None, iterable)   (函数或空，序列)
+    返回结果是集合（与map类似），不像reduce返回的是一个数值，需要用list()转换为序列
+    filter的特点
+    filter根据函数的返回结果确定当前的元素是否要保留，返回true则保留在集合中，返回false则丢掉。
+    ··········································
+    list_x = [1, 0, 1, 0, 0, 1]
+    r = filter(lambda x: True if x==1 else False, list_x)
+    print(r)
+    print(list(r))
+    执行结果：
+    PS D:\python\twl> python.exe .\c5.py
+    <filter object at 0x0000029A4745E3C8>
+    [1, 1, 1]
+    ··········································
+
+
+    ··········································
+    list_x = [1, 0, 1, 0, 0, 1]
+    r = filter(lambda x: x, list_x)           #filter的lambda表达式返回的结果能反应真假就行
+    print(r)
+    print(list(r))
+    执行结果：
+    PS D:\python\twl> python.exe .\c5.py
+    <filter object at 0x0000022FCF71E3C8>
+    [1, 1, 1]
+    ··········································
+
+    ··········································
+    过滤出一个列表的大写字母
+    list_x = ['A', 'c', 'D', 'b', 'E']
+    r = filter(lambda x: x.isupper(), list_x)
+    print(list(r))
+    执行结果：
+    PS D:\python\twl> python.exe .\c6.py
+    ['A', 'D', 'E']
+    ··········································
+
+---命令式编程vs函数式编程
+命令式编程：
+函数，条件语句，循环
+函数式编程：
+map，reduce，filter，lambda
+
+---装饰器
+想给函数添加新的功能，但是又不想直接修改函数的代码，于是就有了装饰器来辅助给函数添加新功能。
+常用的高阶知识
+··········································
+打印函数执行的时间
+import time
+
+def f1():
+    print(time.time())
+    print('This is a function')
+
+f1()
+执行结果：
+PS D:\python\twl> python.exe .\c7.py
+1587634098.1577978             #unix时间戳，或称unix时间，定义为格林威治时间1970年01月01日00时00分00秒起至现在的总秒数。POSIX时间是另一种时间表示方式
+This is a function
+··········································
+上面是一个函数执行时打印出时间，但是如果很多函数需要打印时间呢，是不是要在所有函数中都加上print(time.time())呢？这里有一种解决方法，如下
+··········································
+import time
+
+def f1():
+    print('This is function1')
+
+def f2():
+    print('This is function2')
+
+def print_current_time(func):   #这里并没有改变每个函数，而是新定义了一个函数
+    print(time.time())
+    func()
+
+print_current_time(f1)                #这种方式改变了函数的调用。
+print_current_time(f2)
+··········································
+对修改是封闭的，对扩展是开放的，这就是编程的开闭原则。当需求变更后，尽量不要修改函数和对象的定义，应该通过扩展一个函数或类来解决。
+装饰器只是一种模式，
+可以接受定义时候的复杂，不能接受调用时候的复杂。
+····································
+import time
+
+def decorator(func):            #定义了一个装饰器
+    def wrapper():
+        print(time.time())
+        func()
+    return wrapper
+
+@decorator                 @声明下面这个函数要使用decorator这个装饰器。
+def f1():
+    print('This is function1')
+
+f1()
+执行结果：
+PS D:\python\twl> python.exe .\c8.py
+1587636276.686274
+This is function1
+····································
+装饰器这种模式既不会改变函数的定义，也不会改变函数的调用。
+
+上面这个装饰器适用于不带参数的函数调用，带参数的函数适用这个装饰器就会报错，那这个装饰器怎么能让带参数的函数（参数的个数是不定的）也能适配呢？
+装饰器里面用上可变参数就可以了，如下示例：
+····································
+import time
+
+def decorator(func):
+    def wrapper(*args):         #这里加上可变参数
+        print(time.time())
+        func(*args)             #这里加上可变参数
+    return wrapper
+
+@decorator
+def f1(func_name):
+    print('This is function1 ' + func_name)
+
+@decorator
+def f2(arg1, arg2):
+    print('This is function2 ' + arg1 +' ' + arg2)
+
+f1('test func')
+f2('test func', 'func2')
+····································
+
+上面这个装饰器虽然可以适配可变参数的情况，但是不能适配含有关键字参数的函数。怎样才能实现呢，示例如下：
+
+····································
+import time
+
+def decorator(func):
+    def wrapper(*args, **kw):         #这里加上关键字参数
+        print(time.time())
+        func(*args, **kw)             #这里加上关键字参数
+    return wrapper
+
+@decorator
+def f1(func_name):
+    print('This is function1 ' + func_name)
+
+@decorator
+def f2(arg1, arg2):
+    print('This is function2 ' + arg1 +' ' + arg2)
+
+@decorator
+def f3(arg1, arg2, **kw):
+    print('This is function2 ' + arg1 +' ' + arg2)
+    print(kw)
+
+f1('test func')
+f2('test func', 'func2')
+f3('test func', 'test func2', a=1, b=2, c='123')
+····································
+
+-----原生爬虫
+---分析抓取目的确定抓取页面
+爬虫前奏：
+明确目的
+找到数据对应的网页
+分析网页的结构找到数据所在的标签位置
+
+
+模拟HTTP请求，向服务器发送这个请求，获取到服务器返回给我们的HTML
+用正则表达式提取我们要的数据
+
+
+
+---pythonic与python杂记
+---用字典映射代替switch case语句
+····································
+其他语言的switch case语句（条件分支语句）
+switch (day)
+{
+    case 0 :
+      dayName = 'Sunday';
+      break;
+    case 1 :
+      dayName = 'Monday';
+    case 2 :
+      dayName = 'Tuesday';
+    ...
+    default :
+      dayName = 'Unkown';
+      break;
+}
+····································
+
+····································
+用字典映射替代其他语言的switch语句
+day = 8
+def get_sunday():
+    return 'Sunday'
+
+def get_monday():
+    return 'Monday'
+
+def get_tuesday():
+    return 'Tuesday'
+
+def get_default():     #定义默认函数
+    return 'Unkown'
+
+switcher = {       #这里定义字典，注意这里每一个key的value是一个函数名，在前面定义对应的函数，在函数里面可以做很丰富的操作。
+    0 : get_sunday,    
+    1 : get_monday,
+    2 : get_tuesday
+}
+
+day_name = switcher.get(day, get_default)()    #注意这里字典的内置方法get()，第一个参数表示key，如果key不存在是返回第二个参数。
+如果用字典的索引方法获得key的value，当key不存在时会报错。
+print(day_name)
+····································
+
+---列表推导式
+    一个列表里面的元素经过运算得到一个新的列表，用法如下
+    ····································
+    a = [1,2,3,4,5,6]
+
+    b = [i**2 for i in a]         #a列表里面的元素的平方生成一个新的列表
+    print(b)
+    ····································
+
+
+    ····································
+    a = [1,2,3,4,5,6]
+
+    b = [i**2 for i in a if i>=4]     #还可以对列表中的元素做筛选，这里是只取大于等于4的元素的平方组成列表。
+    print(b)
+    ····································
+    其实这种用法不仅限于列表，集合等数据结构也是可以的。
+    ····································
+    a = {1,2,3,4,5,6}
+
+    b = {i**2 for i in a if i>=4}
+    print(b)
+    ····································
+---字典如何编写列表推导式？
+    ····································
+    students = {
+        'xiaoming': 18,
+        'xiaohua': 20,
+        'xiaoqiang': 15
+    }
+
+    b = [key for key,value in students.items()]    #这里是遍历字典，返回key组成一个新列表，注意这里遍历要用字典的items()方法。
+    print(b)
+    ····································
+
+    ····································
+    students = {
+        'xiaoming': 18,
+        'xiaohua': 20,
+        'xiaoqiang': 15
+    }
+
+    b = {value:key for key,value in students.items()}       #把原字典的key和value颠倒，组成新的字典。
+    print(b)
+    ····································
+
+    ····································
+    students = {
+        'xiaoming': 18,
+        'xiaohua': 20,
+        'xiaoqiang': 15
+    }
+
+    b = (key for key,value in students.items())
+    print(b)
+    执行结果：
+    PS D:\python\14> python.exe .\c2.py
+    <generator object <genexpr> at 0x0000013BAA062750>   这里b得到的是一个generator对象，因为元组不可变，其行为与可变的列表是不一样的。但是这里改成遍历b是可以的
+    for x in b：
+        print(x)    #这样就可以打印出generator对象里的元素。
+    ····································
+
+····································
+利用列表推导式通过一个元组得到一个字典
+chinese_zodiac = '猴鸡狗猪鼠牛虎兔龙蛇马羊'
+zodiac_name = (u'摩羯座', u'水瓶座', u'双鱼座', u'白羊座', u'金牛座', u'双子座',
+            u'巨蟹座', u'狮子座', u'处女座', u'天秤座', u'天蝎座', u'射手座')
+zodiac_day = ((1, 20), (2,19), (3,21), (4,21), (5, 21), (6, 22),
+               (7,23), (8, 23), (9, 23), (10, 23), (11, 23), (12,23))
+
+cz_num = {i:0 for i in chinese_zodiac}             #初始化一个value全部为0的字典
+z_num = {i:0 for i in zodiac_name}
+print(cz_num)
+print(z_num)
+····································
+
+---iterator与generator ？
+
+---None
+空，不等于空字符串，空列表，0，False。值和类型都不相同
+
+
+---python3.8新增海象运算符（:=）
+walrus operator 
+····································
+a = 'python'
+
+if (b:=len(a)) > 5:         #常规的方法是将函数的返回值赋值给一个变量，这样会多一行代码。用海象运算符就可以简化代码
+    print(b)
+····································
+
+---f关键字做字符串拼接
+····································
+a = 'python'
+
+b = len(a)
+if b > 5:
+    print(f'长度大于5;{a}的真实长度为{b}')         #注意f的用法，获取变量的值用大括号引用起来。
+
+执行结果：
+PS D:\python\14> python.exe .\c3.py
+长度大于5;python的真实长度为6
+····································
+
+---python3.7新增数据类dataclass装饰器
+
+
+-----常用模块及方法
+---time模块
+time.sleep()方法，time.sleep(1) 睡眠一秒
+time.time()方法
+
+····································
+import time
+def i_can_sleep():
+    time.sleep(3)
+
+start_time = time.time()
+i_can_sleep()
+stop_time = time.time()
+print('程序运行了 %s 秒' %(stop_time-start_time)
+执行结果：
+PS D:\python\14> python.exe .\c14.py
+程序运行了 3.0023112297058105 秒
+····································
+
+
+
+------经典案例
+····································
+1，计算星座
+zodiac_name = (u'摩羯座', u'水瓶座', u'双鱼座', u'白羊座', u'金牛座', u'双子座',
+            u'巨蟹座', u'狮子座', u'处女座', u'天秤座', u'天蝎座', u'射手座')
+zodiac_day = ((1, 20), (2,19), (3,21), (4,21), (5, 21), (6, 22),
+               (7,23), (8, 23), (9, 23), (10, 23), (11, 23), (12,23))
+
+int_month = int(input('请输入月份：'))
+int_day = int(input('请输入日期：'))
+
+for zd_num in range(len(zodiac_day)):
+    if zodiac_day[zd_num] >= (int_month, int_day):             #小于1月20日的就是摩羯座，小于2月19的就是水瓶座
+        print(zodiac_name[zd_num])
+        break                              #一旦满足条件则停止循环，这点非常重要，否则会继续循环下去
+    elif int_month == 12 and int_day > 23:       
+        print(zodiac_name[0])
+        break
+这里用的是for循环，其实还可以用while循环，如下，注意这两种方法的思想：
+n = 0 
+while zodiac_day[n] < (int_month, int_day):
+    if int_month == 12 and int_day >23:
+        break
+    n += 1
+print(zodiac_name[n])
+····································
+
+-----文件和输入输出
+---文件的内建函数
+open()打开文件，read() 输入， readline() 输入一行， seek() 文件内移动， write() 输出， close() 关闭文件
+····································
+文件要先open，才能进行读写，读写完成后要close文件
+file1 = open('name.txt', 'w')      #这里的w表示以写入模式打开，默认是只读模式。如果这个文件不存在则会在当前目录下生成一个文件
+file1.write('刘备\n')
+file1.close()
+
+file3 = open('name.txt', 'a')      #这里的a表示以追加写模式打开，不会覆盖原文件的内容
+file3.write('诸葛亮\n')
+file3.close()
+
+file2 = open('name.txt')
+print(file2.read())
+file2.close() 
+执行结果：
+PS D:\python\14> python.exe .\c8.py
+刘备
+诸葛亮
+
+····································
+
+····································
+单行读取：
+file1 = open('name.txt')
+print(file1.readline())
+执行结果：
+PS D:\python\14> python.exe .\c8.py
+1 刘备
+····································
+
+····································
+逐行读取文件，对每一行进行操作
+file1 = open('name.txt')
+for line in file1.readlines():         #逐行读取用readlines()方法
+    print(line)
+    print('===')
+执行结果：
+PS D:\python\14> python.exe .\c8.py
+1 刘备
+
+===
+2 诸葛亮
+
+===
+2 关羽
+
+===	
+····································
+
+---open()的用法
+open()默认以只读方式打开文件。rb表示以二进制格式打开一个文件，文件指针将会放在文件的开头。r+ 打开一个文件用于读写，文件指针反正文件开头。seek(offset[, whence])函数可以移动指针，有两个参数，第一个参数表示偏移量，
+第二个参数表示从哪个位置开始偏移，1表示从当前位置开始，0表示从文件开头开始，默认是0,2表示从文件末尾开始。如果打开文件是没有指定b模式（二进制格式）则只允许从文件开头开始偏移，如果从文件末尾或当前位置开始偏移会报错。
+所以如果要从当前位置或文件末尾开始偏移，打开文件时要加上b模式。tell()函数可以获得指针当前位置。
+····································
+file6 = open('name.txt', 'rb')          #这里要加上b模式
+print('当前文件指针的位置: %s' %file6.tell())
+print('当前读取到的一个字符,字符内容是: %s' %file6.read(4))
+print('当前文件指针的位置: %s' %file6.tell())
+
+file6.seek(1, 1)                          #从指针当前位置向后移动一位。
+print('进行了seek操作')
+print('当前文件指针的位置: %s' %file6.tell())
+print('当前读取到的一个字符,字符内容是: %s' %file6.read(4))
+print('当前文件指针的位置: %s' %file6.tell())
+file6.close()
+执行结果：
+PS D:\python\14> python.exe .\c8.py
+当前文件指针的位置: 0
+当前读取到的一个字符,字符内容是: b'1 \xc1\xf5'
+当前文件指针的位置: 4
+进行了seek操作
+当前文件指针的位置: 5                    #从位置4向后移动一位到5
+当前读取到的一个字符,字符内容是: b'\xb82 \xd6'
+当前文件指针的位置: 9
+····································
+
+-----异常的检测和处理
+try:
+	<监控异常>
+except Exception[, reason]:
+	<异常处理代码>
+finally：
+	<无论异常是否发生都执行>
+
+常见的异常：NamERROR(变量没有定义)，SyntaxError(语法错误)，IndexError(超过索引范围，比如‘abc’[3]，这里的索引范围应该是0-2)，KeyError(字典没有对应的key)，
+ValueError(输入的值错误，比如int(input('please input a number: '))这里输入一个字符串就会报错)， AttributeError(属性错误，比如数字类型没有append()方法，如果对数字类型用append()方法就会报错)
+TypeError()
+
+try:
+    year = int(input('input year: '))
+except ValueError:
+    print('年份是数字')
+
+except (AttributeError,ValueError,KeyError) 同时捕获多个异常
+
+
+try:
+    print(1/0)
+except ZeroDivisionError as e:
+    print('0不能做除数 %s' %e)       #显示自定义的报错，同时打印python的报错。
+
+
+try:
+    print(1/'a')
+except Exception as e:         #Exception 可以捕获python的所有异常
+    print(' %s' %e)
+
+····································
+自定义报错信息
+	try:
+    raise NameError('helloError')
+except NameError:
+    print('my custom error')     
+
+····································
+
+····································
+finally的用法，比如打开的文件不管异常与否最后都要关闭
+try:
+    a = open('name.txt')
+except Exception as e:
+    print(e)
+finally:
+    a.close()
+····································
+
+-----迭代器与生成器
+迭代：比如对列表和元组，用for循环取每一个元素，然后对每一个元素处理。这种方法就叫迭代，能够实现这种方法的函数就叫迭代器。
+迭代器有两个基本方法iter()和next(),自定义的迭代器叫做生成器，带yield的迭代器就是生成器。
+
+····································
+
+def frange(start,stop,step):      #这里面有yield是一个生成器，这里每次只取一个元素，
+    x = start
+    while x < stop:
+        yield x
+        x += step
+
+t = frange(10,20,0.5)
+print(next(t))            #调用一次next函数取生成器的一个值，
+print(next(t))
+执行结果：
+PS D:\python\14> python.exe  .\c11.py
+10
+10.5
+····································
+
+-----python语法规范
+autopep8 自动规范工具
+
+-----内建函数
+filter(),map(),reduce(),zip() 
+
+
+----with语句
+
+
+----标准库
+目前常用的模块有
+1，文字处理的 re
+2，日期类型的time，datetime
+3，数字和数字类型的math，random
+4，文件和目录访问的pathlib，os.path
+5，数据压缩和归档的tarfile
+6，通用操作系统的os，logging，argparse
+7，多线程的threading，queue
+8，Internet数据处理的base64，json，urllib
+9，结构化标记处理工具的 html，xml
+10，开发工具的unitest
+11，测试工具的timeit
+12，软件包发布的venv
+13，运行服务的__main__
+
+----日期时间库
+时间模块time，一般用户获取时间
+····································
+import time
+print(time.strftime('%Y-%m-%d %H:%M:%S')    #自定义时间输出格式，这里注意strftime的用法
+执行结果：
+PS D:\python\14> python.exe .\c15.py
+2020-05-13 14:33:14
+····································
+
+---datetime模块一般用于时间的修改
+····································
+import datetime
+print(datetime.datetime.now())         #获取当前时间
+newtime = datetime.timedelta(minutes=10)
+print(datetime.datetime.now() + newtime)         #在当前时间上偏移多少时间得到的时间
+
+one_day = datetime.datetime(2009,5,22)
+new_date = datetime.timedelta(days=20)
+print( one_day + new_date )                     #指定时间加上偏移的时间得到的时间
+执行结果：
+PS D:\python\14> python.exe .\c15.py
+2020-05-13 14:39:30.071291
+2020-05-13 14:49:30.072291
+2009-06-11 00:00:00
+····································
+
+---文件及文件夹操作
+os.path库
+····································
+import os
+
+print(os.path.abspath('.'))             #获取绝对路径
+print(os.path.exists('D:\python\14'))    #判断路径是否存在
+print(os.path.isfile('D:\python\14'))     #判断是否是普通文件
+print(os.path.isdir('D:\python\14'))      #判读是否是目录
+os.path.join('/tmp/a/', 'b/c')             #路径拼接
+····································
+
+pathlib库
+····································
+from pathlib import Path
+p = Path('.')
+print(p.resolve())         #获取p目录的绝对路径
+
+print(p.is_dir())
+
+q = Path('D:\\python\14\a\b\c')
+Path.mkdir(q,parents=True)       #创建q目录，当创建的目录的父目录不存在时则创建父目录，parents=False时则不创建父目录。
+····································
+
+对于嵌套函数来说，内部函数可以访问外部函数定义的变量，但是无法修改，若要修改，必须加上 nonlocal 这个关键字
+
+一旦函数执行完毕，局部变量就会被回收，无法访问
+
+vscode小技巧
+终端清屏：cls
+关闭语法检测
+F5 启动程序
+F10 单步执行（一次执行一行代码）
+F5 跳到下一个断点
+F11 进入函数内部
