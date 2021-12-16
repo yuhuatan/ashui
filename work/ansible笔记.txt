@@ -1,0 +1,460 @@
+Ansible学习笔记
+
+ansible特性：
+不用agent
+幂等性：以结果为导向，多次执行结果不变。
+执行某个task时一台主机执行错误，这个task会回滚。
+
+
+* 主机清单(Inventory)
+没有在主机清单中的主机不能被ansible管理
+主机清单中可以用IP地址或者主机名标识主机，连续的IP地址或者主机名可以用连字符表示（比如：node_[a:z])，主机后面可以定义变量
+可以设置主机组，组还可以嵌套组（比如：[Group1:children] ）
+
+
+主机清单几种格式：
+IP  [ansible_port=22]  [ansible_user=root]  [ansible_ssh_pass=123456]		#直接登记IP地址，后面可以加上参数，这里的ansible_port表示被管主机的ssh端口号，ansible_user表示通过指定用户去连ssh，ansible_ssh_pass表示指定用户的密码，还可以指定其他变量。
+
+HOSTNAME  ansible_host=IP  [ansible_port=22]  [ansible_user=root]  [ansible_ssh_pass] 	#也可通过名称管理主机，通过ansible_host指定主机的ip地址，其他参数可选。
+
+[group1]
+10.0.0.[1:100]
+
+
+ansible两种使用方式：
+ad-hoc：使用ansible命令执行一次性管理操作
+		-m		#指定模块
+		-a		#指定模块的参数
+		-i		#指定主机清单文件
+	
+playbook
+
+
+* 模块(modules):
+ansible-doc  -l			#列出所有的模块
+ansible-doc  -s  MODULE_NAME		#查看模块的详细用法
+
+
+* 常用模块使用：
+
+	必须参数：
+
+	其他参数：
+
+	示例：
+
+
+1，fetch		#从远程主机拉取文件到本地(ansible管理机)
+	必须参数：
+		src		#原文件地址
+		dest		#存放到本地的路径
+	其他参数：
+
+	示例：
+		ansible 10.0.0.2 -m fetch -a "src=/etc/fstab dest=/root/"		#
+
+2，copy			#从本地拷贝文件到远程主机
+	必须参数：
+		dest		#存放到目标主机什么路径下。如果用content指定文件内容，这里不能是目录，必须是文件名。
+		src / content
+			src		#需要拷贝的文件
+			content	#如果要拷贝的文件不存在，可以用content指定文件的内容。这两个参数必选一。
+	其他参数：
+		force		#远程主机有同名文件，但内容不同时是否覆盖。yes表示覆盖，no表示不覆盖，默认为yes。
+		backup		#远程主机有同名文件，但内容不同时是否备份。yes表示备份，no表示不备份。
+		owner		#指定文件拷贝到远程主机后的属主，远程主机必须有这个用户，否则会报错。
+		group		#同上，只不过这里是属组
+		mode		#指定文件拷贝到远程主机后的权限，可以使用mode=0644，或者mode=u+x（属主加执行权限）这种
+		
+
+	示例：
+		ansible GROUP1 -m copy -a 'content="aaa\nbbb\n" dest=/etc/test.conf’		
+
+3，file			#创建/删除文件，修改文件权限
+	必须参数：
+		path			#要操作的文件或者目录，老版本使用dest或者name。
+	其他参数：
+		state		#这个参数的值为directory时path表示的是目录，值为touch时表示创建一个文件而不是目录，值为link时表示创建一个软链接，值为hard时表示硬链接，值为absent时表示删除。
+		src			#当state为link或者hard时，src用来指定链接的源文件。
+		force		#当state=link，配合force强制创建链接文件，当force=yes创建链接文件有几种情况：一，源文件不存在时也会创建link文件；二，存在与链接文件同名(目录也一样)的文件，则同名的文件会被删除，强制创建链接文件；三，存在与链接文件同名(目录也一样)的文件，同时链接文件指向的源文件不存在，也会删除同名文件，创建链接文件。
+		owner		#指定被操作文件的属主，远程主机必须存在该用户，否则报错。
+		group		#同上，只是这里改为属组
+		mode		#指定被操作文件的权限，可以使用mode=0644。
+		recurse		#当操作的文件为目录时，recurse=yes，可以递归修改目录中文件的属性。
+	示例：
+		ansible GROUP1 -m file -a "path=/etc/test state=directory owner=root group=root recurse=yes"
+
+4，blockinfile			#在指定文件中插入一段文本，这段文本是被标记的，可以删除或修改这段文本
+	必须参数：
+		path			#指定要操作的文件
+		block		#指定要插入的文本，另一个参数content也一样
+		marker		#在文件中插入一段文本，ansible会给这段文本添加两个标记，一个开始标记（# BEGIN ANSIBLE MANAGED BLOCK），一个结束标记（# END ANSIBLE MANAGED BLOCK），而maker参数可以自定义标记，比如marker=#{mark}test，这样设置后，开始标记就会变成# BEGIN test，结束标记就会变成# END test。我可以在文件中插入多段文本，分别定义不同的标记。
+		state		#值为present时表示插入或者修改指定标记的文本，值为absent时表示删除指定标记的文本。默认是present
+		insertafter	#在指定行后面插入文本，默认是在文件末尾插入。这里可以通过正则表达式指定行，如果有多行匹配，则在最后匹配的行后面插入。
+		insertbefore	#在指定行前面插入文本，也可以使用正则表达式，用法跟上面一样。值为BOF表示在文件开头插入。
+		backup		#在修改文件前是否备份
+		create		#当要操作的文件不存在时，是否创建。
+	其他参数：
+
+	示例：
+		ansible GROUP1 -m blockinfile -a 'path=/testdir/rc.local block="####blockinfile test####"  marker="#{mark} test reg" insertafter="^#!/bin/bash" '		#在正则表达式后面插入一段文本
+
+5，lineinfile				#在指定文本中添加/删除/替换某一行。
+	必须参数：
+		path			#指定要操作的文件
+
+	其他参数：
+		line			#指定文本内容
+		regexp		#使用正则表达式匹配行，替换时如果有多行匹配则只有最后匹配的行被替换，删除时所有匹配到的行都会被删除。
+		state		#要删除对应的文本时，state的值要设置为absent，默认为present。
+		backrefs		#用正则表达式进行文本替换时，如果backrefs设置为yes，则line可以引用regexp中的分组。backrefs默认值为no，默认情况下，如果正则表达式没有匹配到行则line中的内容会添加到文件尾部。如果backrefs设置为yes，则regexp没有匹配到行的情况下不会添加line中的内容到文件，即不会修改文件。
+		insertafter	#将文本插入到指定行之后，这里的指定行可以是正则表达式或者EOF，EOF表示文件末尾，如果insertafter是正则表达式则表示插入文本到匹配的行，如果没有匹配到行则插入到文末。当使用backrefs时，此参数会被忽略。
+		insertbefore	#将文本插入到文件的指定行之前，值可以为正则表达式或者BOF，BOF表示文件开头。如果正则没有匹配到任何行，则插入到文件末尾，当使用backrefs参数时，此参数会被忽略。
+		backup		#修改文件前是否对文件进行备份。
+		create		#要操作的文件不存在时是否创建该文件。
+	示例：
+		ansible GROUP1 -m lineinfile -a 'path=/root/test regexp="^line" line="test text" backrefs=yes '		#替换以line开头的行，如果有多行匹配则只替换最后匹配的那行，如果没有匹配到任何一行则不对文件进行任何操作。
+		ansible GROUP1 -m lineinfile -a 'path=/testdir/test regexp="(H.{4}).*(H.{4})" line="\2" backrefs=yes'	#前面的regexp分了两组，这里表示用第二组替换整个正则表达式匹配到的内容。
+
+6，find					#查找文件
+	必须参数：
+		paths		#指定在哪个目录查找文件，可以指定多个路径，路径间以逗号隔开，此参数有path、name这两个别名。
+
+	其他参数：
+		recurse		#默认只会在指定的目录查找文件，不会递归到子目录查找，recurse=yes表示递归到子目录进行查找
+		hidden		#默认情况下，隐藏文件会被忽略，当hidden=yes表示隐藏文件也会查找。
+		file_type		#默认情况下只会查找文件，不会查找目录、软连接这类，file_type指定查找文件的类型，有4个值可选：any、directory、file、link。
+		patterns		#指定查找文件的名称，可以使用通配符或者正则表达式，默认使用通配符，如果想使用python正则表达式则需将use_regex参数设置为yes。
+		use_regex	#值为yes表示使用正则表达式解析patterns中的表达式，默认使用glob通配符解析。
+		contains		#使用此参数可以根据文件内容查找文件，此参数的值为一个正则表达式，find模块会根据正则表达式去匹配文件的内容。
+		age			#根据时间查找文件，默认以mtime查找，age=3d表示查找mtime在三天以前的文件，age=-3d表示mtime在三天以内的文件，可以使用的单位有s（秒）、m（分）、h（时）、d（天）、w(星期)。
+		age_stamp	#指定时间种类，有三种值可选atime、ctime，mtime
+		size			#根据文件大小查找，size=3m表示查找大于3MB的文件，size=-3m表示文件大小在3MB以内的，可以使用的单位有t、g、m、k，b。
+		get_checksum		#找到文件时同时计算出该文件的sha1校验码。
+	示例：
+		ansible GROUP1 -m find -a 'paths=/root contains=".*abc.*" '		#查找/root下包含文本“abc”的文件，忽略隐藏文件，不递归查找。
+		ansible GROUP1 -m find -a 'paths=/root patterns=".*\.sh" use_regex=yes file_type=any hidden=yes'	#查找/root目录下以.sh结尾的文件，包含任何类型的文件，包括隐藏文件，这里使用正则表达式。
+		ansible GROUP1 -m find -a "paths=/root patterns=*.sh get_checksum=yes  hidden=yes recurse=yes"
+
+7，replace				#根据正则表达替换文件中的字符串，文件中所有匹配到的字符串都会被替换。
+	必须参数：
+		path			#指定要操作的文件，有dest、destfile、name这些别名
+		regexp		#指定匹配的正则表达式，文件中与正则表达式匹配的字符串会被替换。
+
+	其他参数：
+		replace		#指定最终要替换成的字符串。
+		backup		#修改前是否备份文件。
+	示例：
+		ansible GROUP1 -m replace -a 'path=/root/test regexp="ASM" replace=asm backup=yes'
+
+8，command			#在远程主机上执行命令，使用command模块执行命令时不会经过shell处理，所以命令中包含”<“, “>”, “|”, “;” 和 “&”这些重定向、管道符等操作时，这些符号会失效，这时可以参考shell模块。远程主机为windows时需要使用win_command模块。
+
+	必须参数：
+		命令			#在远程主机上要执行的命令，比如ls、rm等
+	其他参数：
+		chdir		#执行命令前切换到chdir指定的目录
+		creates		#指定一个文件（可以使用通配符），如果指定的文件存在则不执行命令
+		removes		##指定一个文件（可以使用通配符），如果指定的文件不存在则不执行命令
+	示例：
+		ansible test70 -m command -a "chdir=/testdir ls"
+
+9，shell				#在远程主机上执行命令，跟command不同，这里的命令是通过shell进行处理，支持管道，重定向等特殊符号。
+	必须参数：
+		命令			#指定在远程主机上执行的命令
+	其他参数：
+		chdir		#参考command
+		creates		#参考command
+		removes		#参考command
+		executable	#指定shell执行命令，默认的shell是/bin/sh，可以指定shell，要使用绝对路径
+	示例：
+		ansible GROUP1 -m shell -a "chdir=/testdir echo test > test"
+
+10，script			#在远程主机执行ansible主机上的脚本，不用将脚本拷贝到远程主机再执行。
+	必须参数：
+		要在远程执行的脚本		#
+
+	其他参数：
+		chdir				#先切换到指定目录再执行脚本
+		creates				#参考command
+		removes				#参考command
+	示例：
+		ansible GROUP1 -m script -a "creates=/opt/testfile /testdir/atest.sh"
+
+11，cron				#管理远程主机的定时任务
+	时间参数： 当时间参数不指定时表示 “* * * * *” 表示每分钟都执行
+		minute			#指定分钟，默认为“*”
+		hour				#指定小时
+		day				#指定日期
+		month			#指定月份
+		weekday			#指定周几
+		special_time		#指定一些特殊时刻，reboot（重启时），yearly（每年），annually（同yearlly），monthly（每月），weekly（每周），daily（每天），hourly（每时）
+	其他参数：
+		user				#指定此定时任务属于哪个用户，默认是root用户
+		job				#指定需要执行的命令或脚本
+		name			#指定定时任务的名称，方便修改/注释/删除操作。
+		state			#state=absent时表示删除指定的定时任务。
+		disable			#注释指定的定时任务，注释时设定的时间必须与设置的一致，否则任务的时间会被修改然后注释
+		backup			#修改前是否先备份，可以通过执行返回的backup_file看到备份文件的路径。修改定时任务时最好备份一下。
+	示例：
+		ansible GROUP1 -m cron -a " name='test special time' special_time=hourly job='echo test' backup=yes "
+
+12，service				#管理远程主机上的服务（这些服务能被service，systemctl管理）
+	参数：
+		name			#指定服务的名称
+		state			#指定服务的期望状态，可选的状态有started、stopped、restarted、reloaded。
+		enabled			#指定是否开机启动，yes表示开机启动，no表示开机不启动。
+
+	示例：
+		ansible GROUP1 -m service -a "name=nginx state=stopped"
+
+13，user					#管理远程主机上的用户，创建/修改/删除用户，创建密钥等。
+	必须参数：
+		name			#指定要操作的用户名，可以使用别名user。
+	其他参数：
+		group			#指定用户所在的组
+		groups			#指定用户所在的附加组。
+		append			#跟groups配合使用，值为yes时表示追加groups指定的组为用户的附加组。默认值为no，表示用groups的值覆盖原来的附加组。
+		shell				#指定用户的默认shell
+		uid				#指定用户的uid
+		expires			#设置用户的过期时间。比如expires=1546185600，这是时间戳。设置成功后会换算成天数。
+		comment			#指定用户的注释信息
+		state			#指定用户是否要存在，可选值有present、absent，默认值为present表示用户需要存在，absent表示删除该用户。
+		remove			#删除用户时是否删除家目录等信息，值为yes时表示删除家目录等信息，默认值为no
+		password			#设定用户密码，这里不是明文密码，而是加密过的密码，通过python得到加密后的密码。import crypt; crypt.crypt(‘123456’)
+		update_password	#值为always时，password的值与原密码不一致则更新密码。值为on_create时当password的值与原密码不一致则不更新密码，新建用户时除外。
+		generate_ssh_key	#是否生成密钥对，默认值为no表示不生成。yes表示生成，如果已存在则不生成。
+	示例：
+		ansible GROUP1 -m user -a 'name=abc state=absent remove=yes'
+
+14，group				#管理远程主机上的组
+	必须参数：
+		name			#指定要操作的组名称
+	其他参数：
+		state			#指定组的期望状态，可选值有present，absent。absent表示删除组。
+		gid				#组id
+
+15，yum_repository			#管理远程主机的yum仓库
+	必须参数：
+		name			#指定要操作的仓库名，唯一标识仓库。
+	其他参数：
+		baseurl			#yum仓库的baseurl
+		description		#设置仓库的注释信息，也就是”.repo”配置文件中每个仓库对应的”name字段”对应的内容。
+		file				#设置仓库配置文件的文件名
+		enable			#是否启用此仓库，默认值为yes表示启用，no表示不启用。
+		gpgcheck			#是否开启rpm包验证功能，默认值为no表示不验证，yes表示开启验证。
+		gpgcakey			#当gpgcheck值为yes时，需要用此参数指定验证包所需要的公钥。
+		state			#默认值为present，值为absent时表示删除对应的yum原。
+	示例：
+		ansible GROUP1 -m yum_repository -a 'name=aliEpel description="alibaba EPEL" baseurl=https://mirrors.aliyun.com/epel/$releasever\Server/$basearch/ file=alibaba'
+
+16，yum					#管理远程主机上的软件包
+	必须参数：
+		name			#指定需要管理的软件包
+	其他参数：
+		state			#期望软件包的状态，默认值为present表示期望已安装，其他可选值有installed、latest、absent、removed，其中installed同present，latest表示安装最新版。absent同removed，表示卸载软件包。
+		disable_gpg_check	#是否禁用对rpm包的公钥gpg验证，默认值为no表示不禁用验证，yes表示禁用验证。
+		enablerepo		#安装软件包时临时启用的yum源。假设所用的yum源没有启用的话，这个参数设置为yes可以临时启用这个yum源。
+		disablerepo		#安装软件包时临时禁用某个yum源，适用于安装的软件包存在于多个yum源中的情况。
+	示例：
+		ansible GROUP1 -m yum -a 'name=nginx state=latest disable_gpg_check=yes'
+		ansible GROUP1 -m yum -a 'name=telnet disable_gpg_check=yes disablerepo=local'
+
+17，setup				#获取远程主机的信息，比如主机名，ip地址，磁盘等等。我们在playbook中可以直接使用这些信息。
+	示例：
+		ansible GROUP1 -m setup		
+		ansible GROUP1 -m setup -a 'filter=ansible_memory_mb'		#只过滤出ansible_memory_mb的信息
+		ansible GROUP1 -m setup -a "filter=*mb*"					#过滤字段还可以使用通配符
+	在远程主机上自定义的信息也可以被setup模块获取到，自定义信息可以放在远程主机的etc/ansible/facts.d（如果不放在该目录下，使用setup模块获取自定义变量信息是需要使用fact_path指定自定义变量文件的存放目录）下，以”.fact”作为自定义信息文件的后缀。自定义变量信息应该用ini或者json格式。如下例：
+  	[root@test70 facts.d]# cat testinfo.fact
+ [testmsg]
+ msg1=This is the first custom test message
+ msg2=This is the second custom test message
+  使用ansible_local关键字就可以过滤出自定义变量信息：ansible test70 -m setup -a "filter=ansible_local"
+
+18，debug				#帮助我们调试playbook，比如打印变量的值
+		参数：
+			msg			#指定需要打印出的信息，里面可以包含变量，比如msg: "memory information: {{ansible_memory_mb}}"
+			var			#打印变量信息，比如var: testvar， testvar是上面定义的变量
+	
+yaml语法：
+首行以三横线”---”开始。
+缩进使用空格，不能用tab。
+缩进距离没有要求，同级的缩进左对齐就行。
+字典的键后面带冒号，冒号后面要有一个空格。
+
+
+
+* playbook
+playbook由一个或多个play组成，一个play可以包含一个或多个task，task就是使用模块做具体的操作。一个剧本（playbook）可以有多个桥段（play），一个桥段可以任务、场景等等。
+默认情况下每个play的第一个task是Gathering Facts，这个task是获取要执行这个play的所有远程主机的信息，比如主机名，ip地址，磁盘等等。这个task就是使用setup这个模块
+
+
+play的组成：
+	必须项：
+		hosts
+		tasks
+	可选项：
+		remote_user
+		become
+		vars
+
+task的语法：
+	模块的参数有三种写法：
+tasks:
+- name: make testfile
+   file:
+     path: /testdir/testfile
+     state: touch
+     mode: 0700
+
+tasks:
+- name: make testfile
+   file: path=/testdir/testfile 			#一行写不完可以分成多行，但是要注意左对齐。
+		      state=touch mode=0700
+
+tasks:
+- name: make testfile
+   action: file path=/testdir/testfile state=touch mode=0700		#用action调用模块，这是旧的写法。
+	
+	task的各个属性没有顺序要求，但是严格要求缩进对齐。
+
+handlers
+	有些task之间是有关联的，比如修改了某个服务的配置文件，需要重启对应的服务才能使配置修改生效，这个两个task就是关联的，只有修改了配置文件就触发重启服务，如果配置文件没有变动则不重启服务。handlers就是用来满足这种需求，handlers可以说是另一种tasks，常规的task真正执行（发生了变化，返回为黄色）之后通过notify触发指定的handler执行。但是常规情况下并不是task一执行完触发的handler就马上执行，要等tasks列表里面所有的task执行完成后才会执行被触发的handler，而且handlers里面task的执行也是按顺序执行的，不是按触发先后顺序执行的。如果想要tasks下的某个task一执行完成就触发执行handlers下的handler，可以在该task后面加上- meta: flush_handlers 表示马上执行触发的handlers下的handler，注意- meta: flush_handlers跟该task是同级的。还可以在一个task后面触发一个handler组，则属于同一个handler组中的handler都会被触发，handler定义中listen字段的值一样的handler就属于同一个handler组。
+	示例：
+---
+- hosts: GROUP1
+  remote_user: root
+  tasks:
+  - name: task1
+    file: path=/testdir/testfile
+          state=touch
+    notify: handler group1
+
+- meta: flush_handlers
+
+	      - name: task1
+ 	        file: path=/testdir/testfile
+         	       state=touch
+
+  handlers:
+  - name: handler1
+    listen: handler group1
+    file: path=/testdir/ht1
+          state=touch
+  - name: handler2
+    listen: handler group1
+    file: path=/testdir/ht2
+          state=touch
+
+tags
+	可以给task或者play打tag(标签)，执行playbook时可以只执行或者跳过带有指定tag的task或者paly，如果给play加tag则play下面的task都会继承这个tag。一个task/play可以带多个tag，执行playbook时也可以使用--tags或者--skip-tags指定一个或多个tag(多个tag之间用逗号分隔)。加tag的几种语法如下：
+
+语法一：
+tags:
+ - testtag
+ - t1
+ 
+语法二：
+tags: tag1,t1
+ 
+语法三：
+tags: ['tagtest','t2']
+
+	几种特殊的tag
+		always		#带有该tag的任务总是会执行，除非使用--skip-tags明确跳过，但是指定always跳过的话会跳过所有带有always的任务，所以给该任务另外一个tag。
+		never		#
+		tagged		#这不是加给任务的，只是在执行时用来指定所有有tag的任务
+		untagged		#这不是加给任务的，只是在执行时用来指定所有不带tag的任务
+		all			#表示所有任务会被执行，不用指定，默认情况下就是使用这个标签。
+	
+	示例：
+		ansible-playbook --skip-tags tagged testtag.yml		#跳过所有带了tag的任务
+		ansible-playbook --tags untagged testtag.yml		#执行所有没有带tag的任务
+
+变量					#变量由字母、数字、下划线组成，需要以字母开头，不能使用ansible占用的关键字
+	方法一：在playbook中定义变量
+	vars				#在playbook中可以使用vars关键字定义变量
+	vars定义变量的几种语法：
+		语法一：
+vars:
+   testvar1: testfile
+   testvar2: testfile2
+		语法二：
+vars:
+   - testvar1: testfile
+   - testvar2: testfile2
+		语法三：
+  vars:
+     nginx:
+        conf80: /etc/nginx/conf.d/80.conf
+        conf8080: /etc/nginx/conf.d/8080.conf
+
+	引用变量
+
+  - name: task1
+    file:
+      path: /testdir/{{ testvar1 }}			#如果变量前面还有其他字符串则可以不用引号引用变量。
+      state: touch
+
+  - name: task1
+    file:
+      path: "{{nginx.conf80}}"			#如果变量在开头（前面没有其他字符串）则需要用引号引用，否则报错	
+      state: touch
+  - name: task2
+    file:
+      path: "{{nginx.conf8080}}"			#或者"{{nginx['conf8080’]}}”
+      state: touch
+
+  - name: task1
+    file:
+      path={{nginx.conf80}}				#可以用等号给模块参数赋值，这样引用变量就可以不用引号。
+      state=touch
+  - name: task2
+    file:
+      path={{nginx['conf8080']}}
+      state=touch
+
+		
+	方法二：使用变量文件定义变量，有些场景中playbook可以公开，变量值不便公开。
+		变量文件示例：		#不用vars关键字
+语法一示例：
+  testvar1: testfile
+  testvar2: testfile2
+语法二示例：
+  - testvar1: testfile
+  - testvar2: testfile2
+语法三示例：
+nginx:
+  conf80: /etc/nginx/conf.d/80.conf
+  conf8080: /etc/nginx/conf.d/8080.conf
+
+		使用变量文件定义的变量：
+---
+- hosts: test70
+  remote_user: root
+  vars_files:						#使用var_files导入变量文件
+  - /testdir/ansible/nginx_vars.yml
+  tasks:
+  - name: task1
+    file:
+      path={{nginx.conf80}}
+      state=touch
+  - name: task2
+    file:
+      path={{nginx['conf8080']}}
+      state=touch
+
+		上面两种变量定义方式可以同时使用
+
+1. ansible-playbook --syntax-check test.yaml        #检查yaml文件的语法是否正确
+2. ansible-playbook --check test.yml		        	#模拟执行，不会真正执行。
+
+4. ansible-playbook --list-task test.yaml  			#列出tasks任务
+
+5. ansible-playbook  --list-hosts test.yaml  		#列出待执行的主机
+
+6. ansible-playbook  --start-at-task=‘Copy Nginx.conf’  test.yaml  		#从指定的task开始执行
+7. ansible-playbook --list-tags testhttpd.yml            #列出playbook中的tag
+8. 
+
+
