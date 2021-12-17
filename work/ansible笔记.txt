@@ -286,7 +286,8 @@ yaml语法：
 
 * playbook
 playbook由一个或多个play组成，一个play可以包含一个或多个task，task就是使用模块做具体的操作。一个剧本（playbook）可以有多个桥段（play），一个桥段可以任务、场景等等。
-默认情况下每个play的第一个task是Gathering Facts，这个task是获取要执行这个play的所有远程主机的信息，比如主机名，ip地址，磁盘等等。这个task就是使用setup这个模块
+默认情况下每个play的第一个task是Gathering Facts，这个task是获取要执行这个play的所有远程主机的信息，比如主机名，ip地址，磁盘等等。这个task就是使用setup这个模块。
+可以在play中使用gather_facts：no 跳过这个默认的[Gathering Facts]任务。
 
 
 play的组成：
@@ -373,79 +374,289 @@ tags: ['tagtest','t2']
 
 变量					#变量由字母、数字、下划线组成，需要以字母开头，不能使用ansible占用的关键字
 	方法一：在playbook中定义变量
-	vars				#在playbook中可以使用vars关键字定义变量
-	vars定义变量的几种语法：
-		语法一：
-vars:
-   testvar1: testfile
-   testvar2: testfile2
-		语法二：
-vars:
-   - testvar1: testfile
-   - testvar2: testfile2
-		语法三：
-  vars:
-     nginx:
-        conf80: /etc/nginx/conf.d/80.conf
-        conf8080: /etc/nginx/conf.d/8080.conf
+	    vars				#在playbook中可以使用vars关键字定义变量
+	        vars定义变量的几种语法：
+	        	语法一：
+                  vars:
+                     testvar1: testfile
+                     testvar2: testfile2
+	        	语法二：
+                  vars:
+                     - testvar1: testfile
+                     - testvar2: testfile2
+	        	语法三：
+                  vars:
+                     nginx:
+                        conf80: /etc/nginx/conf.d/80.conf
+                        conf8080: /etc/nginx/conf.d/8080.conf
 
 	引用变量
+          - name: task1
+            file:
+              path: /testdir/{{ testvar1 }}			#如果变量前面还有其他字符串则可以不用引号引用变量。
+              state: touch
 
-  - name: task1
-    file:
-      path: /testdir/{{ testvar1 }}			#如果变量前面还有其他字符串则可以不用引号引用变量。
-      state: touch
+          - name: task1
+            file:
+              path: "{{nginx.conf80}}"			#如果变量在开头（前面没有其他字符串）则需要用引号引用，否则报错	
+              state: touch
+          - name: task2
+            file:
+              path: "{{nginx.conf8080}}"			#或者"{{nginx['conf8080’]}}”
+              state: touch
 
-  - name: task1
-    file:
-      path: "{{nginx.conf80}}"			#如果变量在开头（前面没有其他字符串）则需要用引号引用，否则报错	
-      state: touch
-  - name: task2
-    file:
-      path: "{{nginx.conf8080}}"			#或者"{{nginx['conf8080’]}}”
-      state: touch
-
-  - name: task1
-    file:
-      path={{nginx.conf80}}				#可以用等号给模块参数赋值，这样引用变量就可以不用引号。
-      state=touch
-  - name: task2
-    file:
-      path={{nginx['conf8080']}}
-      state=touch
+          - name: task1
+            file:
+              path={{nginx.conf80}}				#可以用等号给模块参数赋值，这样引用变量就可以不用引号。
+              state=touch
+          - name: task2
+            file:
+              path={{nginx['conf8080']}}
+              state=touch
 
 		
 	方法二：使用变量文件定义变量，有些场景中playbook可以公开，变量值不便公开。
 		变量文件示例：		#不用vars关键字
-语法一示例：
-  testvar1: testfile
-  testvar2: testfile2
-语法二示例：
-  - testvar1: testfile
-  - testvar2: testfile2
-语法三示例：
-nginx:
-  conf80: /etc/nginx/conf.d/80.conf
-  conf8080: /etc/nginx/conf.d/8080.conf
+            语法一示例：
+              testvar1: testfile
+              testvar2: testfile2
+            语法二示例：
+              - testvar1: testfile
+              - testvar2: testfile2
+            语法三示例：
+            nginx:
+              conf80: /etc/nginx/conf.d/80.conf
+              conf8080: /etc/nginx/conf.d/8080.conf
 
 		使用变量文件定义的变量：
----
-- hosts: test70
-  remote_user: root
-  vars_files:						#使用var_files导入变量文件
-  - /testdir/ansible/nginx_vars.yml
-  tasks:
-  - name: task1
-    file:
-      path={{nginx.conf80}}
-      state=touch
-  - name: task2
-    file:
-      path={{nginx['conf8080']}}
-      state=touch
+            ---
+            - hosts: test70
+              remote_user: root
+              vars_files:						#使用var_files导入变量文件
+              - /testdir/ansible/nginx_vars.yml
+              tasks:
+              - name: task1
+                file:
+                  path={{nginx.conf80}}
+                  state=touch
+              - name: task2
+                file:
+                  path={{nginx['conf8080']}}
+                  state=touch
 
-		上面两种变量定义方式可以同时使用
+	上面两种变量定义方式可以同时使用
+* 注册变量          #一个task执行后会有一些“返回值”，只是默认情况下，这些“返回值”并不会显示。
+                    将一个task的“返回值”赋值给一个变量就称为注册变量。使用注册变量不仅可以
+                    显示task的执行返回值，还可以根据返回值决定之后的一些动作。注册变量使用
+                    register进行定义。
+    示例：
+        ---
+        - hosts: test70
+          remote_user: root
+          tasks:
+          - name: test shell
+            shell: "echo test > /var/testshellfile"
+            register: testvar                       #这里使用register将这个task的返
+                                                     回值赋值给testvar这个变量。
+          - name: shell module return values
+            debug:
+              var: testvar                          #这里使用debug模块将上面定义的注册
+                                                     变量打印出来。testvar变量是一个json对象。
 
+        返回结果如下：
+           TASK [shell module return values] **********************************************************************
+            ok: [test70] => {
+                "testvar": {
+                    "changed": true, 
+                    "cmd": "echo test > /var/testshellfile", 
+                    "delta": "0:00:00.003808", 
+                    "end": "2018-06-17 20:42:37.675382", 
+                    "failed": false, 
+                    "rc": 0, 
+                    "start": "2018-06-17 20:42:37.671574", 
+                    "stderr": "", 
+                    "stderr_lines": [], 
+                    "stdout": "", 
+                    "stdout_lines": []
+                }
+            }                                          
+            如果只想取这个json对象里面的某个字段的值，可以使用以下方法：
+                语法一
+                  - name: shell module return values
+                    debug:
+                      msg: "{{testvar.cmd}}"
+                语法二
+                  - name: shell module return values
+                    debug:
+                      msg: "{{testvar['cmd']}}"
+
+    在主机清单（Inventory）中定义变量,可以使用ini或json两种方式定义。
+        给单个主机配置变量          #直接在主机后面定义变量即可。
+            test70 ansible_host=10.1.1.70 testhostvar=test70_host_var
+        给主机组定义变量        
+            [testB:vars]
+            test_group_var1='group var test'
+            test_group_var2='group var test2'
+        json方式
+            all:
+             children:
+               testB:
+                 hosts:
+                   test70:
+                     ansible_host: 10.1.1.70
+                     ansible_port: 22
+                     testhostvar: test70_host_var
+                     testhostvar3:
+                       thv31: 3.1
+                       thv32: 3.2
+                   test71:
+                     ansible_host: 10.1.1.71
+                     ansible_port: 22
+                 vars:
+                   test_group_var1: 'group var test1'
+                   test_group_var2: 'group var test2'
+    通过set_fact定义变量        #set_fact是一个模块，通过这个模块可以给这个play的hosts里的主机定义变量，
+                                默认情况下每个play执行时都会执行”[Gathering Facts]”这个task来获取主机的相关信息，
+                                我们称这信息为facts信息，我们可以在play中直接使用facts信息，而通过set_fact定义的变量
+                                就相当于facts信息。通过set_fact定义的变量可以跨play使用，而在play中用vars定义的变量
+                                是不能跨play引用的。注意通过set_fact定义的变量是定义给主机的，跨play作用同一台主机时
+                                才能使用set_fact定的变量。
+        示例：
+            ---
+            - hosts: test70
+              remote_user: root
+              vars:
+                testvar1: tv1
+              tasks:
+              - set_fact:
+                  testvar2: tv2
+              - debug:
+                  msg: "{{testvar1}} ----- {{testvar2}}"
+
+            - hosts: test70
+              remote_user: root
+              tasks:
+              - name: other play get testvar2
+                debug:
+                  msg: "{{testvar2}}"
+              - name: other play get testvar1
+                debug:
+                  msg: "{{testvar1}}"       #这里引用上一个play用vars定义的变量会报错。
+        
+playbook的交互       #playbook在执行过程中可以与用户进行交互，获取用户的输入，
+                     然后根据用户的输入决定下一步的动作。可以使用vars_prompt模块
+                     来接收用户的输入。
+        playbook交互示例：
+        ---
+        - hosts: test70
+          remote_user: root
+          vars_prompt:                      #使用vars_prompt接收用户输入
+            - name: "user_name"             #用户输入的内容会保存到name定义的变量名中
+              prompt: "Enter user name"     #输入提示
+              private: no                   #（可选）输入是否可见，
+                                             值为no时表示用户可以看到自己输入了什么内容。
+                                             默认值为yes，表示用户看不到自己输入了什么。
+              default："andy"               #（可选）默认值，如果用户没有输入就用这个默认值。
+            - name: "user_password"
+              prompt: "Enter user password"
+              encrypt: "sha512_crypt"       #（可选）用户输入的明文密码经过哈希处理再传给user_password变量。
+                                             这里哈希加密依赖python的passlib库。
+              confirm: yes                  #（可选）重复确认，两次的输入完全相同才设置成功。
+          tasks:
+           - name: create user
+             user:
+              name: "{{user_name}}"
+              password: "{{user_password}}"
+
+* 通过命令行传入变量        #通过命令行传入的变量优先级比playbook和变量文件的高。
+                         如果playbook中引用了一个没有定义的变量执行会报错，可以
+                         在执行playbook是临时传入变量就可以正常执行。ad-hoc和playbook
+                         方式都可以在命令行通过--extra-vars参数（或简写-e）传入变量。
+                         不仅可以传入变量，还可以传变量文件。
+
+    示例：  
+        ansible-playbook cmdvar.yml -e 'pass_var="test" pass_var1="test1"'      #多个变量以空格分隔。
+        ansible test70 -e "testvar=test" -m shell -a "echo {{testvar}}"   
+        ansible-playbook cmdvar.yml -e '{"testvar":"test","testvar1":"test1"}'  #以json格式传入变量
+        ansible-playbook cmdvar.yml -e '{"countlist":["one","two","three","four"]}'    #这种方式如果想获取“one”，
+                                                                                        有两种方法：{{countlist[0]}} 或者 {{countlist.0}}  
+        ansible-playbook cmdvar.yml -e "@/testdir/ansible/testvar"          #变量文件以@开头
+
+* ansible内置变量
+    ansible_version         #这个变量表示ansible的版本，可以直接使用
+    hostvars                #可以通过这个内置变量访问其他主机的变量（包括facts信息，主机清单里定义的变量，或者set_fact设置的变量）
+                             针对A主机执行playbook时，要使用B主机的facts信息，则必须提前收集B主机的facts信息（B主机执行过”[Gathering Facts]”）
+        示例：  
+              ---
+              - name: "play 1: Gather facts of test71"
+                hosts: test71
+                remote_user: root               #这个play没有定义task，但是会执行默认的[Gathering Facts]任务，
+                                                 也就是会收集test71的facts信息，后面的play会用到。
+              
+              - name: "play 2: Get facts of test71 when operating on test70"
+                hosts: test70
+                remote_user: root
+                tasks:
+                - debug:
+                    msg: "{{hostvars['test71'].ansible_ens35.ipv4}}"    #针对test70执行play，引用test71的facts信息。
+                                                                         另一种引用方法："{{hostvars.test71.ansible_ens35.ipv4}}"                  
+              #除了facts信息，还能引用其他主机的注册变量
+              ---
+              - hosts: test71
+                remote_user: root
+                gather_facts: no
+                tasks:
+                - shell: "echo register_var_in_play1"
+                  register: shellreturn
+              
+              - hosts: test70
+                remote_user: root
+                gather_facts: no
+                tasks:
+                - debug:
+                    msg: "{{hostvars.test71.shellreturn.stdout}}"
+
+    inventory_hostname          #这个变量表示当前被执行主机在主机清单中定义的主机别名，如果主机清单中没有定义主机别名，则值为ip地址。
+    inventory_hostname_short    #也是表示主机清单中的定义的主机别忙，只不过取简短别名（第一个点号前面的），比如test70.yh.com取test70。
+    play_host                   #当前play所操作的所有主机的主机名列表。
+    groups                      #这个变量包含了主机清单里面的所有主机，主机与分组的关系，没有分组的主机放在ungrouped下面。
+    group_names                 #这个变量表示当前主机所属的所有组，如果当前主机不属于任何组就是ungrouped组。
+    inventory_dir               #这个变量表示主机清单的存放目录。
+
+循环
+    这里有两个关键字with_items和item，可以将一个列表赋值给with_items，然后item遍历with_items列表中的各个元素。
+        示例1：
+              tasks:
+              - debug:
+                  msg: "{{item}}"                       #item遍历with_items列表中的所有元素
+                with_items: "{{groups.ungrouped}}"      #这里把主机清单中不属于任何组的主机列表赋值给with_items
+        示例2:
+              tasks:
+              - debug:
+                  msg: "{{item}}"
+                with_items:                             #可以直接定义一个列表赋值给with_items。with_items: [ 1,2,3 ]这种形式也可。
+                - 1
+                - 2
+                - 3
+        示例3:
+              tasks:
+              - debug:
+                  msg: "{{item.test1}}"
+                with_items:                             
+                - { test1: a, test2: b }
+                - { test1: c, test2: d }
+        示例4:
+              tasks:
+              - shell: "{{item}}"
+                with_items:
+                - "ls /opt"
+                - "ls /home"
+                register: returnvalue                   #这个play会循环执行两次shell模块，然后执行返回值会赋给注册变量returnvalue
+                                                         后面的执行返回不会覆盖前面的执行返回，每次执行返回都会追加到returnvalue对象的results属性里面，
+                                                         results是一个列表。
+              - debug:
+                  msg: "{{item.stdout}}"                
+                with_items: "{{returnvalue.results}}"    #将上个task的注册变量returnvalue对象的results字段的值赋值给with_items。
 1. ansible-playbook --syntax-check test.yaml        #检查yaml文件的语法是否正确
 2. ansible-playbook --check test.yml		        	#模拟执行，不会真正执行。
 
