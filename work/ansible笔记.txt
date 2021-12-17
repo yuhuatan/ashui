@@ -13,9 +13,13 @@ ansible特性：
 
 
 主机清单几种格式：
-IP  [ansible_port=22]  [ansible_user=root]  [ansible_ssh_pass=123456]		#直接登记IP地址，后面可以加上参数，这里的ansible_port表示被管主机的ssh端口号，ansible_user表示通过指定用户去连ssh，ansible_ssh_pass表示指定用户的密码，还可以指定其他变量。
+IP  [ansible_port=22]  [ansible_user=root]  [ansible_ssh_pass=123456]		#直接登记IP地址，后面可以加上参数，
+                                                                         这里的ansible_port表示被管主机的ssh端口号，
+                                                                         ansible_user表示通过指定用户去连ssh，
+                                                                         ansible_ssh_pass表示指定用户的密码，还可以指定其他变量。
 
-HOSTNAME  ansible_host=IP  [ansible_port=22]  [ansible_user=root]  [ansible_ssh_pass] 	#也可通过名称管理主机，通过ansible_host指定主机的ip地址，其他参数可选。
+HOSTNAME  ansible_host=IP  [ansible_port=22]  [ansible_user=root]  [ansible_ssh_pass] 	#也可通过名称管理主机，
+                                                                                         通过ansible_host指定主机的ip地址，其他参数可选。
 
 [group1]
 10.0.0.[1:100]
@@ -74,9 +78,13 @@ ansible-doc  -s  MODULE_NAME		#查看模块的详细用法
 	必须参数：
 		path			#要操作的文件或者目录，老版本使用dest或者name。
 	其他参数：
-		state		#这个参数的值为directory时path表示的是目录，值为touch时表示创建一个文件而不是目录，值为link时表示创建一个软链接，值为hard时表示硬链接，值为absent时表示删除。
+		state		#这个参数的值为directory时path表示的是目录，值为touch时表示创建一个文件而不是目录，
+             值为link时表示创建一个软链接，值为hard时表示硬链接，值为absent时表示删除。
 		src			#当state为link或者hard时，src用来指定链接的源文件。
-		force		#当state=link，配合force强制创建链接文件，当force=yes创建链接文件有几种情况：一，源文件不存在时也会创建link文件；二，存在与链接文件同名(目录也一样)的文件，则同名的文件会被删除，强制创建链接文件；三，存在与链接文件同名(目录也一样)的文件，同时链接文件指向的源文件不存在，也会删除同名文件，创建链接文件。
+		force		#当state=link，配合force强制创建链接文件，当force=yes创建链接文件有几种情况：
+             一，源文件不存在时也会创建link文件；
+             二，存在与链接文件同名(目录也一样)的文件，则同名的文件会被删除，强制创建链接文件；
+             三，存在与链接文件同名(目录也一样)的文件，同时链接文件指向的源文件不存在，也会删除同名文件，创建链接文件。
 		owner		#指定被操作文件的属主，远程主机必须存在该用户，否则报错。
 		group		#同上，只是这里改为属组
 		mode		#指定被操作文件的权限，可以使用mode=0644。
@@ -88,7 +96,9 @@ ansible-doc  -s  MODULE_NAME		#查看模块的详细用法
 	必须参数：
 		path			#指定要操作的文件
 		block		#指定要插入的文本，另一个参数content也一样
-		marker		#在文件中插入一段文本，ansible会给这段文本添加两个标记，一个开始标记（# BEGIN ANSIBLE MANAGED BLOCK），一个结束标记（# END ANSIBLE MANAGED BLOCK），而maker参数可以自定义标记，比如marker=#{mark}test，这样设置后，开始标记就会变成# BEGIN test，结束标记就会变成# END test。我可以在文件中插入多段文本，分别定义不同的标记。
+		marker		#在文件中插入一段文本，ansible会给这段文本添加两个标记，一个开始标记（# BEGIN ANSIBLE MANAGED BLOCK），
+               一个结束标记（# END ANSIBLE MANAGED BLOCK），而maker参数可以自定义标记，比如marker=#{mark}test，
+               这样设置后，开始标记就会变成# BEGIN test，结束标记就会变成# END test。我可以在文件中插入多段文本，分别定义不同的标记。
 		state		#值为present时表示插入或者修改指定标记的文本，值为absent时表示删除指定标记的文本。默认是present
 		insertafter	#在指定行后面插入文本，默认是在文件末尾插入。这里可以通过正则表达式指定行，如果有多行匹配，则在最后匹配的行后面插入。
 		insertbefore	#在指定行前面插入文本，也可以使用正则表达式，用法跟上面一样。值为BOF表示在文件开头插入。
@@ -107,9 +117,13 @@ ansible-doc  -s  MODULE_NAME		#查看模块的详细用法
 		line			#指定文本内容
 		regexp		#使用正则表达式匹配行，替换时如果有多行匹配则只有最后匹配的行被替换，删除时所有匹配到的行都会被删除。
 		state		#要删除对应的文本时，state的值要设置为absent，默认为present。
-		backrefs		#用正则表达式进行文本替换时，如果backrefs设置为yes，则line可以引用regexp中的分组。backrefs默认值为no，默认情况下，如果正则表达式没有匹配到行则line中的内容会添加到文件尾部。如果backrefs设置为yes，则regexp没有匹配到行的情况下不会添加line中的内容到文件，即不会修改文件。
-		insertafter	#将文本插入到指定行之后，这里的指定行可以是正则表达式或者EOF，EOF表示文件末尾，如果insertafter是正则表达式则表示插入文本到匹配的行，如果没有匹配到行则插入到文末。当使用backrefs时，此参数会被忽略。
-		insertbefore	#将文本插入到文件的指定行之前，值可以为正则表达式或者BOF，BOF表示文件开头。如果正则没有匹配到任何行，则插入到文件末尾，当使用backrefs参数时，此参数会被忽略。
+		backrefs		#用正则表达式进行文本替换时，如果backrefs设置为yes，则line可以引用regexp中的分组。backrefs默认值为no，
+                 默认情况下，如果正则表达式没有匹配到行则line中的内容会添加到文件尾部。
+                 如果backrefs设置为yes，则regexp没有匹配到行的情况下不会添加line中的内容到文件，即不会修改文件。
+		insertafter	#将文本插入到指定行之后，这里的指定行可以是正则表达式或者EOF，EOF表示文件末尾，
+                 如果insertafter是正则表达式则表示插入文本到匹配的行，如果没有匹配到行则插入到文末。当使用backrefs时，此参数会被忽略。
+		insertbefore	#将文本插入到文件的指定行之前，值可以为正则表达式或者BOF，BOF表示文件开头。
+                   如果正则没有匹配到任何行，则插入到文件末尾，当使用backrefs参数时，此参数会被忽略。
 		backup		#修改文件前是否对文件进行备份。
 		create		#要操作的文件不存在时是否创建该文件。
 	示例：
@@ -147,7 +161,8 @@ ansible-doc  -s  MODULE_NAME		#查看模块的详细用法
 	示例：
 		ansible GROUP1 -m replace -a 'path=/root/test regexp="ASM" replace=asm backup=yes'
 
-8，command			#在远程主机上执行命令，使用command模块执行命令时不会经过shell处理，所以命令中包含”<“, “>”, “|”, “;” 和 “&”这些重定向、管道符等操作时，这些符号会失效，这时可以参考shell模块。远程主机为windows时需要使用win_command模块。
+8，command			#在远程主机上执行命令，使用command模块执行命令时不会经过shell处理，所以命令中包含”<“, “>”, “|”, “;” 和 “&”这些重定向、管道符等操作时，
+                 这些符号会失效，这时可以参考shell模块。远程主机为windows时需要使用win_command模块。
 
 	必须参数：
 		命令			#在远程主机上要执行的命令，比如ls、rm等
@@ -264,7 +279,8 @@ ansible-doc  -s  MODULE_NAME		#查看模块的详细用法
 		ansible GROUP1 -m setup		
 		ansible GROUP1 -m setup -a 'filter=ansible_memory_mb'		#只过滤出ansible_memory_mb的信息
 		ansible GROUP1 -m setup -a "filter=*mb*"					#过滤字段还可以使用通配符
-	在远程主机上自定义的信息也可以被setup模块获取到，自定义信息可以放在远程主机的etc/ansible/facts.d（如果不放在该目录下，使用setup模块获取自定义变量信息是需要使用fact_path指定自定义变量文件的存放目录）下，以”.fact”作为自定义信息文件的后缀。自定义变量信息应该用ini或者json格式。如下例：
+	在远程主机上自定义的信息也可以被setup模块获取到，自定义信息可以放在远程主机的etc/ansible/facts.d（如果不放在该目录下，
+  使用setup模块获取自定义变量信息是需要使用fact_path指定自定义变量文件的存放目录）下，以”.fact”作为自定义信息文件的后缀。自定义变量信息应该用ini或者json格式。如下例：
   	[root@test70 facts.d]# cat testinfo.fact
  [testmsg]
  msg1=This is the first custom test message
@@ -320,7 +336,12 @@ tasks:
 	task的各个属性没有顺序要求，但是严格要求缩进对齐。
 
 handlers
-	有些task之间是有关联的，比如修改了某个服务的配置文件，需要重启对应的服务才能使配置修改生效，这个两个task就是关联的，只有修改了配置文件就触发重启服务，如果配置文件没有变动则不重启服务。handlers就是用来满足这种需求，handlers可以说是另一种tasks，常规的task真正执行（发生了变化，返回为黄色）之后通过notify触发指定的handler执行。但是常规情况下并不是task一执行完触发的handler就马上执行，要等tasks列表里面所有的task执行完成后才会执行被触发的handler，而且handlers里面task的执行也是按顺序执行的，不是按触发先后顺序执行的。如果想要tasks下的某个task一执行完成就触发执行handlers下的handler，可以在该task后面加上- meta: flush_handlers 表示马上执行触发的handlers下的handler，注意- meta: flush_handlers跟该task是同级的。还可以在一个task后面触发一个handler组，则属于同一个handler组中的handler都会被触发，handler定义中listen字段的值一样的handler就属于同一个handler组。
+	有些task之间是有关联的，比如修改了某个服务的配置文件，需要重启对应的服务才能使配置修改生效，这个两个task就是关联的，只有修改了配置文件就触发重启服务，
+  如果配置文件没有变动则不重启服务。handlers就是用来满足这种需求，handlers可以说是另一种tasks，常规的task真正执行（发生了变化，返回为黄色）之后通过
+  notify触发指定的handler执行。但是常规情况下并不是task一执行完触发的handler就马上执行，要等tasks列表里面所有的task执行完成后才会执行被触发的handler，
+  而且handlers里面task的执行也是按顺序执行的，不是按触发先后顺序执行的。如果想要tasks下的某个task一执行完成就触发执行handlers下的handler，可以在该
+  task后面加上- meta: flush_handlers 表示马上执行触发的handlers下的handler，注意- meta: flush_handlers跟该task是同级的。还可以在一个task后面触
+  发一个handler组，则属于同一个handler组中的handler都会被触发，handler定义中listen字段的值一样的handler就属于同一个handler组。
 	示例：
 ---
 - hosts: GROUP1
@@ -348,7 +369,9 @@ handlers
           state=touch
 
 tags
-	可以给task或者play打tag(标签)，执行playbook时可以只执行或者跳过带有指定tag的task或者paly，如果给play加tag则play下面的task都会继承这个tag。一个task/play可以带多个tag，执行playbook时也可以使用--tags或者--skip-tags指定一个或多个tag(多个tag之间用逗号分隔)。加tag的几种语法如下：
+	可以给task或者play打tag(标签)，执行playbook时可以只执行或者跳过带有指定tag的task或者paly，如果给play加tag则play下面
+  的task都会继承这个tag。一个task/play可以带多个tag，执行playbook时也可以使用--tags或者--skip-tags指定一个或多
+  个tag(多个tag之间用逗号分隔)。加tag的几种语法如下：
 
 语法一：
 tags:
