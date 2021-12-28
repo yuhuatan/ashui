@@ -1453,6 +1453,12 @@ playbook的交互       #playbook在执行过程中可以与用户进行交互�
             - debug:
                 msg: "{{ '123123' | password_hash('sha512', 65534|random(seed=inventory_hostname)|string) }}"
 
+jinja2模版        #把ansible主机上模版文件经过渲染后拷贝到远程主机的指定位置。模版文件中有些变量，渲染就是把这些变量替换成各个远程主机的值的过程。
+    jinja2的基本语法：
+          {{  }}    #用来装载表达式，比如变量，运算表达式，比较表达式等。python的基本数据类型都支持
+                    示例：{{ testvar1 }}, {{ 2>1 }}, {{ 3+2 }}, {{ 1 in [1,2,3,4] }}
+          {%  %}    #用来装载控制语句，比如if控制结构，for循环控制结构。
+          {#  #}    #用来装载注释，模版文件被渲染后，注释不会包含在最终生成的文件中。
 1. ansible-playbook --syntax-check test.yaml        #检查yaml文件的语法是否正确
 2. ansible-playbook --check test.yml		        	#模拟执行，不会真正执行。
 
