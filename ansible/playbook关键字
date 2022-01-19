@@ -1,0 +1,13 @@
+play 
+    check_mode          #后面接布尔值，用来控制task是否在“check”模式下运行。check模式下运行不会改变主机状态。
+    run_once            #布尔值，绕过主机循环，强制task在第一台可用的主机上执行，然后将执行结果和facts应用到同一批次的所有活动主机。
+
+role
+    run_once            #布尔值，绕过主机循环，强制task在第一台可用的主机上执行，然后将执行结果和facts应用到同一批次的所有活动主机。
+
+block
+    run_once            #布尔值，绕过主机循环，强制task在第一台可用的主机上执行，然后将执行结果和facts应用到同一批次的所有活动主机。
+
+task
+    failed_when         #后面的条件表达式为true时表示把该task的状态改为failed，条件表达式为false时表示不改为failed状态。
+    run_once            #布尔值，绕过主机循环，强制task在第一台可用的主机上执行，然后将执行结果和facts应用到同一批次的所有活动主机。
