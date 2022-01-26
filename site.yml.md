@@ -8,90 +8,10 @@
  ##   03 加载部署ceph集群过程中需要的用到的变量 [import_role ceph-defaults]
      ceph集群部署过程中用到的很多变量都定义在ceph-defaults role中，比如ceph集群名称,各个ceph服务组的组名等等
  ##   04 设置facts [import_role ceph-facts] 
-     根据系统版本设置容器管理程序，如果是RHEL/CentOs 8则容器管理程序为podman，否则为docker
-     设置ceph启动命令（容器方式部署ceph为podman run，非容器方式部署为ceph）
-     设置要安装的ceph版本代号
-     设置monitor_name
-     确定集群的fsid、crush规则
-     设置monitor ip、radosgw ip
+     设置一些供后面的role使用的参数，这些参数不能预先定义在ceph-defaults里面，ceph-defaults中都是预先确定的参数，而有些参数需要根据系统配置或者集群状态的信息来确定。比如需要根据系统版本确定容器管理程序是podman还是docker，要根据主机名确定各个monitor节点的monitor_name，要根据部署方式确定ceph服务启动方式是podman run还是ceph，比如后面的ceph-config role需要根据这里设置的一些facts渲染模版文件。确定集群的fsid、crush规则,设置monitor ip、radosgw ip
      设置ceph管理命令（ceph -n client.admin -k /etc/ceph/ceph.client.admin.keyring）
      设置rgw端口、rgw_zone
 
-      05-01 include tasks # include facts.yml 
-      05-01-01_ok task # 检查是否是原子主机系统，原子系统不是传统通用的操作系统，原子系统主要设计来运行容器。 
-      05-01-02_ok task # is_atomic: false ,获取原子主机的检查状态赋值给注册变量is_atomic
-      05-01-03 import_tasks # container_binary.yml 设置容器管理命令
-      05-01-03-01_ok task # check if podman binary is present 检查podman是否存在
-      05-01-03-02_ok task # set_fact container_binary 根据条件设置容器管理程序,这里为podman
-      05-01-04_ok task # set_fact ceph_cmd 根据条件设置ceph启动命令，如果是容器方式部署就用podman启动，否则为ceph，这里是ceph
-      05-01-05_skipping task # set_fact discovered_interpreter_python 根据条件设置discovered_interpreter_python,这里条件为false
-      05-01-06_ok task # set_fact discovered_interpreter_python 根据条件设置discovered_interpreter_python: /usr/libexec/platform-python
-      05-01-07_ok task # set_fact ceph_release ceph_stable_release 设置ceph版本为octopus
-      05-01-08_ok task # set_fact monitor_name 设置各个monitor节点的monitor_name为主机名
-      05-01-09 tasks # find a running monitor 找到一个running的monitor
-      05-01-09-01_skipping task # set_fact container_exec_cmd 以容器方式部署ceph时设置容器执行命令
-      05-01-09-02_skipping task # find a running mon container 以容器方式部署ceph时找到一个running的ceph-monitor容器
-      05-01-09-03_ok task # check for a ceph mon socket 在每一台monitor节点上检查socket文件是否存在,返回值赋值给mon_socket_stat
-      05-01-09-04_ok task # check if the ceph mon socket is in-use 检查每一台ceph-monitor上的ceph monitor socket 是否在使用,返回值赋值给mon_socket
-      05-01-09-05_skipping task # set_fact running_mon - non_container 非容器部署下如果ceph-monitor socket文件存在且正在使用，则将ceph-monitor主机名赋值给running_mon
-      05-01-09-06_skipping task # set_fact running_mon - container 容器部署下如果ceph-monitor 容器存在且正在使用，则将ceph-monitor主机名赋值给running_mon
-      05-01-09-07_skipping task # set_fact _container_exec_cmd 容器部署下设置容器执行命令
-      05-01-09-08_ok task # get current fsid if cluster is already running 非升级时获取当前集群的fsid
-      05-01-10_skipping task # set_fact current_fsid rc 1 升级或者mons组中没有主机时设置当前的current_fsid为1
-      05-01-11_skipping task # get current fsid 升级且mons组中没有主机数不为空时获取当前的current fsid赋值给rolling_update_fsid
-      05-01-12_skipping task # set_fact fsid 升级且mons组中没有主机数不为空时设置fsid为rolling_update_fsid的stdout字段
-      05-01-13_skipping task # set_fact fsid from current_fsid 上面的task05-01-09-08_ok 成功获取到fsid时把current_fsid.stdout赋值给fsid
-      05-01-15 block # fsid related tasks 非升级且获取不到当前fsid同时generate_fsid变量为true时，fsid的相关操作,这里条件为true
-      05-01-15-01_changed task # generate cluster fsid 生成集群fsid赋值给cluster_uuid
-      05-01-15-02_ok task # set_fact fsid 设置fsid为cluster_uuid的stdout
-      05-01-16 import_tasks # import_tasks devices.yml 执行主机在osds组中时导入devices的tasks,得到磁盘序列
-      05-01-16-01_skipping task # resolve device link(s), devices有定义同时osd_auto_discovery为false时找出符号链接后面的真正磁盘文件
-      05-01-16-02_skipping task # set_fact build devices from resolved symlinks, devices有定义同时osd_auto_discovery为false时根据上个task的返回设置磁盘盘符。
-      05-01-16-03_skipping task # set_fact build devices from resolved symlinks, devices有定义同时osd_auto_discovery为false时根据上个task的返回设置磁盘序列。
-      05-01-16-04_skipping task # resolve dedicated_device link(s), dedicated_devices有定义同时osd_auto_discovery为false时找出符号链接后面的真正磁盘文件
-      05-01-16-05_skipping task # set_fact build dedicated_devices from resolved symlinks, dedicated_devices有定义同时osd_auto_discovery为false时根据上个task的返回拿到磁盘文件
-      05-01-16-06_skipping task # set_fact build final dedicated_devices list, dedicated_devices有定义同时osd_auto_discovery为false时根据上个task的返回得到磁盘序列
-      05-01-16-07_skipping task # resolve bluestore_wal_device link(s), bluestore_wal_devices有定义同时osd_auto_discovery为false时找到bluestore_wal_device符号链接指向的磁盘文件
-      05-01-16-08_skipping task # set_fact build bluestore_wal_devices from resolved symlinks, bluestore_wal_devices有定义同时osd_auto_discovery为false时根据上个task的返回得到磁盘文件
-      05-01-16-09_skipping task # set_fact build final bluestore_wal_devices list, bluestore_wal_devices有定义同时osd_auto_discovery为false时根据上个task的返回得到磁盘文件序列
-      05-01-16-01_skipping task # set_fact devices generate device list when osd_auto_discovery, 开启osd磁盘自动发现时设置磁盘序列
-      05-01-17_skipping block # backward compatibility tasks related, 向后兼容相关任务
-      05-01-17-01_skipping task # get ceph current status, 获取ceph集群服务各服务状态
-      05-01-17-02_skipping task # set_fact ceph_current_status, 上个task成功获取到集群服务状态时将服务状态信息赋值给ceph_current_status变量
-      05-01-17-03_skipping task # set_fact rgw_hostname, 上个task的变量ceph_current_status的rgw服务存在时提取rgw主机
-      05-01-18_ok task# check if the ceph conf exists, 检查ceph.conf文件是否存在,返回值赋给注册变量ceph_conf
-      05-01-19_ok task# set default osd_pool_default_crush_rule fact, 设置osd pool的默认crush规则，这个变量在role ceph-defaults/vars/main.yml中有定义
-      05-01-20_skipping block# get default crush rule value from ceph configuration, ceph.conf配置文件存在时从中获取默认crush规则
-      05-01-20-01_skipping task# read osd pool default crush rule, ceph.conf配置文件存在时从中获取默认crush规则
-      05-01-20-02_skipping task# set osd_pool_default_crush_rule fact, 上个task成功获取到crush规则时设置crush规则
-      05-01-21_skipping block# get default crush rule value from running monitor ceph configuration, ceph.conf配置文件不存在且running_mon有定义时从running的ceph-monitor获取crush规则
-      05-01-22_ok import_tasks# import_tasks set_monitor_address.yml, 导入设置ceph-monitor ip地址的tasks
-      05-01-22-01_skipping task# set_fact _monitor_addresses to monitor_address_block ipv4 ?
-      05-01-22-02_skipping task# set_fact _monitor_addresses to monitor_address_block ipv6 ?
-      05-01-22-03_skipping task# set_fact _monitor_addresses to monitor_address ?
-      05-01-22-04_ok task# set_fact _monitor_addresses to monitor_interface - ipv4 ?
-      05-01-22-05_skipping task# set_fact _monitor_addresses to monitor_interface - ipv6 ?
-      05-01-22-06_ok task# set_fact _current_monitor_address ?
-      05-01-23_ok import_tasks# import_tasks set_radosgw_address.yml, 导入设置radosgw ip地址的tasks
-      05-01-23-01_ok task# set_fact _radosgw_address to radosgw_address_block ipv4, ?
-      05-01-23-02_skipping task# set_fact _radosgw_address to radosgw_address_block ipv6, ?
-      05-01-23-03_skipping task# set_fact _radosgw_address to radosgw_address, ?
-      05-01-23-04_skipping block# tasks for radosgw interface, ?
-      05-01-23-04-01_skipping task# set_fact _interface, ?
-      05-01-23-04-02_skipping task# set_fact _radosgw_address to radosgw_interface - ipv4, ?
-      05-01-23-04-03_skipping task# set_fact _radosgw_address to radosgw_interface - ipv6, ?
-      05-01-23-05_skipping task# set_fact rgw_instances without rgw multisite|rgw_yh_es_sync, ?
-      05-01-23-06_ok task# set_fact is_rgw_instances_defined, ?
-      05-01-23-07_skipping task# set_fact rgw_instances with rgw multisite, ?
-      05-01-23-08_ok task# set_fact rgw_yh_client_instances with rgw_yh_es_sync, 设置客户端rgw的port、zone、user、key、realm等信息
-      05-01-23-09_ok task# set_fact rgw_yh_master_instances, 设置master rgw的port、zone、user、key、realm等信息
-      05-01-23-01_ok task# set_fact rgw_yh_esync_instances, 设置esync rgw的port、zone、user、key、realm等信息
-      05-01-23-11_ok task# set_fact rgw_instances with rgw_yh_es_sync, 设置es同步信息
-      05-01-23-12_ok task# set_fact rgw_instances_host, 
-      05-01-23-13_ok task# set_fact rgw_instances_all, 
-      05-01-024_skipping task# set_fact use_new_ceph_iscsi package or old ceph-iscsi-config/cli, iscsi相关
-      05-01-025_ok task# set_fact ceph_run_cmd, 设置ceph启动命令，这里ceph_run_cmd为ceph
-      05-01-026_ok task# set_fact ceph_admin_command, 设置ceph管理命令，这里ceph_admin_command为ceph -n client.admin -k /etc/ceph/ceph.client.admin.keyring
 
  ##   05 设置ceph各个服务参数 [import_role ceph-handler]
  ###     06-01-00 include # include check_running_cluster.yml ,检查ceph集群中各种服务的socket文件是否存在，以及是否被进程在使用，以及各种ceph相关进程的pid
@@ -247,6 +167,11 @@
    09-12-00 include_tasks # include selinux.yml, 配置selinux
 
  #   部署monitor
+ ##  加载默认配置 [import_role ceph-defaults]
+ ##  设置facts [import_role ceph-facts]
+ ### 加载facts.yml
+ ##  检查ceph各项服务状态[import_role ceph-handler]
+ ##  [import_role ceph-config]
 
  #   部署mgr
 
