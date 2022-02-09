@@ -84,13 +84,13 @@
  ###### TASK [ceph-facts : set_fact ceph_current_status] *** skipping
  skipping: [cepht1]
  ###### TASK [ceph-facts : set_fact rgw_hostname] *** skipping
- ##### TASK [ceph-facts : check if the ceph conf exists] ***
- ok: [cepht1,cepht2,cepht3,cepht4,cepht5]
+ ##### TASK [ceph-facts : check if the ceph conf exists] *** ok
  ##### TASK [ceph-facts : set default osd_pool_default_crush_rule fact] ***
  ok: [cepht1,cepht2,cepht3,cepht4,cepht5]
- ##### TASK [ceph-facts : read osd pool default crush rule] ***
+ ##### block [get default crush rule value from ceph configuration] ***
+ ###### TASK [ceph-facts : read osd pool default crush rule] ***
  skipping: [cepht1,cepht2,cepht3,cepht4,cepht5]
- ##### TASK [ceph-facts : set osd_pool_default_crush_rule fact] ***
+ ###### TASK [ceph-facts : set osd_pool_default_crush_rule fact] ***
  skipping: [cepht1,cepht2,cepht3,cepht4,cepht5]
  ##### TASK [ceph-facts : read osd pool default crush rule] ***
  skipping: [cepht1,cepht2,cepht3,cepht4,cepht5]
